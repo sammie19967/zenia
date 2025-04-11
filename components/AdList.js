@@ -1,5 +1,5 @@
 "use client";
-
+import "@/styles/AdList.css";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import AdFilter from "./AdFilter";
@@ -26,23 +26,60 @@ export default function AdList() {
     fetchAds();
   }, []);
 
-  if (loading) return <p>Loading ads...</p>;
-  if (!ads.length) return <p>No ads found.</p>;
+  if (loading) return (
+    <div className="loading-container">
+      <div className="loading-spinner"></div>
+      <p>Loading ads...</p>
+    </div>
+  );
+  
+  if (!ads.length) return (
+    <div className="empty-state">
+      <p>No ads found.</p>
+      <button onClick={() => fetchAds()} className="refresh-btn">
+        Refresh
+      </button>
+    </div>
+  );
 
   return (
-    <div style={{ padding: "1rem" }}>
+    <div className="ad-list-container">
       <AdFilter onFilter={fetchAds} />
 
-      <div className="ads-container" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "1rem" }}>
+      <div className="ads-grid">
         {ads.map((ad) => (
-          <div key={ad._id} className="ad-card" style={{ border: "1px solid #ccc", borderRadius: "10px", padding: "0.5rem" }}>
-            <img src={ad.images?.[0] || "/placeholder.jpg"} alt={ad.title} style={{ width: "100%", height: "180px", objectFit: "cover" }} />
-            <div>
-              <h3>{ad.title}</h3>
-              <p>Ksh {ad.price.toLocaleString()}</p>
-              <p>{ad.condition} • Negotiable? {ad.negotiable}</p>
-              <Link href={`/ads/${ad._id}`}>
-                <button style={{ marginTop: "0.5rem" }}>View Details</button>
+          <div key={ad._id} className="ad-card">
+            <div className="image-container">
+              <img 
+                src={ad.images?.[0] || "/placeholder.jpg"} 
+                alt={ad.title} 
+                className="ad-image"
+                onError={(e) => {
+                  e.target.src = "/placeholder.jpg";
+                }}
+              />
+              <span className={`condition-tag ${ad.condition.toLowerCase()}`}>
+                {ad.condition}
+              </span>
+            </div>
+            
+            <div className="card-body">
+              <h3 className="ad-title">{ad.title}</h3>
+              
+              <div className="price-row">
+                <span className="price">Ksh {ad.price.toLocaleString()}</span>
+                <span className={`negotiable-tag ${ad.negotiable ? 'yes' : 'no'}`}>
+                  {ad.negotiable ? 'Negotiable' : 'Fixed'}
+                </span>
+              </div>
+              
+              <Link href={`/ads/${ad._id}`} className="details-link">
+                <button className="view-details-btn">
+                  View Details
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
               </Link>
             </div>
           </div>
