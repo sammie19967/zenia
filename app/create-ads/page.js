@@ -1,0 +1,12 @@
+import DynamicForm from '@/components/DynamicForm'
+import React from 'react'
+
+const AdsCreate = () => {
+  return (
+    <div>AdsCreate
+        <DynamicForm/>
+    </div>
+  )
+}
+
+export default AdsCreate

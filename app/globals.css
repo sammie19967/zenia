@@ -1,59 +1,47 @@
+/* Import Google Font */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/* Global Color Variables */
+/* Light Mode (Default) */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary: #1e3a8a; /* Dark Blue */
+  --color-secondary: #ef4444; /* Red */
+  --color-background: #ffffff; /* White */
+  --color-background-alt:var(--color-secondary); /* Light Gray for alternate backgrounds */
+  --color-text: #1e3a8a; /* Dark Blue for text */
+  --color-text-light: #6b7280; /* Light Gray for subheadlines */
+  --color-overlay: rgba(0, 0, 0, 0.5); /* Semi-transparent black for overlays */
+
+  /* Footer Variables */
+  --color-footer-bg: #1e3a8a; /* Dark Blue for footer background */
+  --color-footer-text: #ffffff; /* White for footer text */
+  --color-footer-hover: #ef4444/* Red for footer hover effects */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Dark Mode */
+[data-theme="dark"] {
+  --color-primary: #3b82f6; /* Lighter Blue */
+  --color-secondary: #ef4444; /* Red */
+  --color-background: #1a1a1a; /* Dark Background */
+  --color-background-alt:(var(--color-background)); 
+  --color-text: #e5e7eb; /* Light Text */
+  --color-text-light: #9ca3af; /* Light Gray for subheadlines */
+  --color-overlay: rgba(0, 0, 0, 0.7); /* Darker overlay */
+
+  /* Footer Variables */
+  --color-footer-bg: #111827; /* Dark Gray for footer background */
+  --color-footer-text: #e5e7eb; /* Light Text for footer */
+  --color-footer-hover: #ef4444; /* Red for footer hover effects */
 }
 
-html,
+
+
+/* Apply Colors and Font to the Whole App */
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  font-family: "Poppins", sans-serif; /* Use Google Font */
   margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-width: 400px;
-  margin: 2rem auto;
-}
-
-label {
-  font-weight: bold;
-}
-
-select {
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  padding: 0;
+  box-sizing: border-box;
 }
