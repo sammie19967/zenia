@@ -9,3 +9,9 @@ export async function POST(req) {
 
   return Response.json({ message: 'Ad created successfully', ad });
 }
+export async function GET() {
+    await connectDB();
+  
+    const ads = await Ad.find({}).sort({ createdAt: -1 });
+    return Response.json(ads);
+  }
