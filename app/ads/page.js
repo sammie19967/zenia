@@ -1,4 +1,4 @@
-import Ad from '@/models/Ad'
+
 import React from 'react'
 import AdList from '@/components/AdList'
 
