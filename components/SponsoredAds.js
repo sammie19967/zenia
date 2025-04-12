@@ -131,13 +131,6 @@ export default function SponsoredAds() {
                     <MapPin /> {ad.countyId?.name || "Nairobi"}, {ad.subcountyId?.name || "CBD"}
                   </span>
                 </div>
-                <Link 
-                  href={`/ads/${ad._id}`} 
-                  className="zen-view-button"
-                >
-                  View details
-                  <span className="zen-button-arrow">→</span>
-                </Link>
               </div>
             </div>
           ))}

@@ -121,7 +121,7 @@
 
 .zen-card-media {
   position: relative;
-  padding-top: 75%; /* 4:3 aspect ratio */
+  padding-top: 100%; /* Square aspect ratio for better mobile display */
   overflow: hidden;
 }
 
@@ -223,38 +223,6 @@
   fill: #718096;
 }
 
-.zen-view-button {
-  margin-top: 1rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem 1rem;
-  background-color: #4f46e5;
-  color: white;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  z-index: 3;
-}
-
-.zen-view-button:hover {
-  background-color: #4338ca;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
-}
-
-.zen-button-arrow {
-  margin-left: 0.5rem;
-  transition: transform 0.3s ease;
-}
-
-.zen-view-button:hover .zen-button-arrow {
-  transform: translateX(2px);
-}
-
 /* Loading State */
 .zen-sponsored-loading {
   display: flex;
@@ -321,45 +289,44 @@
   box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
 }
 
-/* Responsive Adjustments */
-@media (max-width: 1200px) {
+/* Responsive Adjustments - Mobile First Approach */
+@media (min-width: 480px) {
+  .zen-card-media {
+    padding-top: 75%; /* 4:3 aspect ratio on larger screens */
+  }
+  
+  .zen-sponsored-card {
+    min-width: 180px; /* Ensure cards don't get too narrow */
+  }
+}
+
+@media (min-width: 768px) {
+  .zen-sponsored-title {
+    font-size: 1.5rem;
+  }
+  
+  .zen-product-title {
+    font-size: 1.05rem;
+  }
+  
+  .zen-product-price {
+    font-size: 1.15rem;
+  }
+}
+
+@media (min-width: 1200px) {
   .zen-sponsored-section {
     padding: 0 1.5rem;
   }
   
   .zen-sponsored-title {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
   }
 }
 
-@media (max-width: 768px) {
-  .zen-sponsored-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-  
-  .zen-nav-controls {
-    align-self: flex-end;
-  }
-  
-  .zen-sponsored-title {
-    font-size: 1.4rem;
-  }
-  
-  .zen-premium-badge {
-    font-size: 0.7rem;
-    padding: 3px 8px;
-  }
-}
-
-@media (max-width: 480px) {
-  .zen-sponsored-section {
-    padding: 0 1rem;
-  }
-  
-  .zen-sponsored-title {
-    font-size: 1.3rem;
+@media (max-width: 479px) {
+  .zen-sponsored-card {
+    min-width: 150px; /* Wider cards on small devices */
   }
   
   .zen-card-content {
@@ -367,16 +334,30 @@
   }
   
   .zen-product-title {
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    min-height: 2.2rem;
   }
   
-  .zen-view-button {
-    padding: 0.5rem;
-    font-size: 0.85rem;
+  .zen-product-price {
+    font-size: 1rem;
+  }
+  
+  .zen-product-location {
+    font-size: 0.75rem;
   }
   
   .zen-premium-badge {
-    top: 8px;
-    right: 8px;
+    font-size: 0.65rem;
+    padding: 3px 8px;
+  }
+  
+  .zen-nav-button {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .zen-nav-icon {
+    width: 18px;
+    height: 18px;
   }
 }
