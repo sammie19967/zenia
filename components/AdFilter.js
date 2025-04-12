@@ -1,6 +1,6 @@
 "use client";
-
 import { useEffect, useState } from "react";
+import "@/styles/AdFilter.css"; // We'll create this CSS file
 
 export default function AdFilter({ onFilter }) {
   const [categories, setCategories] = useState([]);
@@ -10,23 +10,27 @@ export default function AdFilter({ onFilter }) {
     countyId: "",
     minPrice: "",
     maxPrice: "",
-    sortBy: "latest", // or "views"
+    sortBy: "latest",
   });
 
   useEffect(() => {
     const fetchOptions = async () => {
-      const [catRes, countyRes] = await Promise.all([
-        fetch("/api/categories"),
-        fetch("/api/counties"),
-      ]);
+      try {
+        const [catRes, countyRes] = await Promise.all([
+          fetch("/api/categories"),
+          fetch("/api/counties"),
+        ]);
 
-      const [catData, countyData] = await Promise.all([
-        catRes.json(),
-        countyRes.json(),
-      ]);
+        const [catData, countyData] = await Promise.all([
+          catRes.json(),
+          countyRes.json(),
+        ]);
 
-      setCategories(catData);
-      setCounties(countyData);
+        setCategories(catData);
+        setCounties(countyData);
+      } catch (error) {
+        console.error("Error fetching filter options:", error);
+      }
     };
 
     fetchOptions();
@@ -44,43 +48,107 @@ export default function AdFilter({ onFilter }) {
     onFilter(filters);
   };
 
+  const handleReset = () => {
+    setFilters({
+      categoryId: "",
+      countyId: "",
+      minPrice: "",
+      maxPrice: "",
+      sortBy: "latest",
+    });
+    onFilter({}); // Reset filters
+  };
+
   return (
-    <form onSubmit={handleSubmit} style={{ marginBottom: "1rem", display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
-      <select name="categoryId" value={filters.categoryId} onChange={handleChange}>
-        <option value="">All Categories</option>
-        {categories.map((cat) => (
-          <option key={cat._id} value={cat._id}>{cat.name}</option>
-        ))}
-      </select>
+    <form onSubmit={handleSubmit} className="filter-form">
+      <div className="filter-grid">
+        <div className="filter-group">
+          <label htmlFor="categoryId">Category</label>
+          <select 
+            id="categoryId"
+            name="categoryId" 
+            value={filters.categoryId} 
+            onChange={handleChange}
+            className="filter-select"
+          >
+            <option value="">All Categories</option>
+            {categories.map((cat) => (
+              <option key={cat._id} value={cat._id}>{cat.name}</option>
+            ))}
+          </select>
+        </div>
 
-      <select name="countyId" value={filters.countyId} onChange={handleChange}>
-        <option value="">All Counties</option>
-        {counties.map((county) => (
-          <option key={county._id} value={county._id}>{county.name}</option>
-        ))}
-      </select>
+        <div className="filter-group">
+          <label htmlFor="countyId">County</label>
+          <select 
+            id="countyId"
+            name="countyId" 
+            value={filters.countyId} 
+            onChange={handleChange}
+            className="filter-select"
+          >
+            <option value="">All Counties</option>
+            {counties.map((county) => (
+              <option key={county._id} value={county._id}>{county.name}</option>
+            ))}
+          </select>
+        </div>
 
-      <input
-        type="number"
-        name="minPrice"
-        placeholder="Min Price"
-        value={filters.minPrice}
-        onChange={handleChange}
-      />
-      <input
-        type="number"
-        name="maxPrice"
-        placeholder="Max Price"
-        value={filters.maxPrice}
-        onChange={handleChange}
-      />
+        <div className="filter-group">
+          <label htmlFor="minPrice">Min Price (Ksh)</label>
+          <input
+            id="minPrice"
+            type="number"
+            name="minPrice"
+            placeholder="Any"
+            value={filters.minPrice}
+            onChange={handleChange}
+            className="filter-input"
+            min="0"
+          />
+        </div>
 
-      <select name="sortBy" value={filters.sortBy} onChange={handleChange}>
-        <option value="latest">Latest</option>
-        <option value="views">Most Viewed</option>
-      </select>
+        <div className="filter-group">
+          <label htmlFor="maxPrice">Max Price (Ksh)</label>
+          <input
+            id="maxPrice"
+            type="number"
+            name="maxPrice"
+            placeholder="Any"
+            value={filters.maxPrice}
+            onChange={handleChange}
+            className="filter-input"
+            min="0"
+          />
+        </div>
 
-      <button type="submit">Apply Filters</button>
+        <div className="filter-group">
+          <label htmlFor="sortBy">Sort By</label>
+          <select 
+            id="sortBy"
+            name="sortBy" 
+            value={filters.sortBy} 
+            onChange={handleChange}
+            className="filter-select"
+          >
+            <option value="latest">Latest</option>
+            <option value="views">Most Viewed</option>
+          </select>
+        </div>
+
+        <div className="filter-actions">
+          <button type="submit" className="filter-button apply">
+            Apply Filters
+          </button>
+          <button 
+            type="button" 
+            onClick={handleReset}
+            className="filter-button reset"
+          >
+            Reset
+          </button>
+        </div>
+      </div>
     </form>
   );
 }

@@ -11,6 +11,7 @@
   --color-text: #1e3a8a; /* Dark Blue for text */
   --color-text-light: #6b7280; /* Light Gray for subheadlines */
   --color-overlay: rgba(0, 0, 0, 0.5); /* Semi-transparent black for overlays */
+  --color-border: #f09797f3; /* Light Gray for borders */
 
   /* Footer Variables */
   --color-footer-bg: #1e3a8a; /* Dark Blue for footer background */

@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Upload, X, Check, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import '@/styles/form.css';
+import '@/styles/DynamicForm.css';
 
 export default function DynamicForm() {
   // Form state
@@ -32,7 +32,6 @@ export default function DynamicForm() {
   // Image handling
   const [images, setImages] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   
   // Form flow
   const [currentStep, setCurrentStep] = useState(1);
@@ -40,7 +39,7 @@ export default function DynamicForm() {
   const [modalContent, setModalContent] = useState({
     title: '',
     message: '',
-    type: 'info', // 'info', 'success', 'error'
+    type: 'info',
   });
 
   // Fetch initial data
@@ -106,7 +105,6 @@ export default function DynamicForm() {
   const handleFileChange = e => {
     const files = Array.from(e.target.files);
     
-    // Validate files
     if (files.length > 5) {
       showErrorModal('Upload Error', 'Maximum 5 images allowed.');
       e.target.value = null;
@@ -120,7 +118,6 @@ export default function DynamicForm() {
       return;
     }
     
-    // Create previews
     const fileArray = files.map(file => ({
       file,
       preview: URL.createObjectURL(file)
@@ -138,7 +135,6 @@ export default function DynamicForm() {
     if (images.length === 0) return [];
     
     setIsUploading(true);
-    setUploadProgress(0);
     
     try {
       const formData = new FormData();
@@ -155,7 +151,6 @@ export default function DynamicForm() {
         throw new Error(data.error || 'Upload failed');
       }
       
-      // Clean up preview URLs
       images.forEach(img => URL.revokeObjectURL(img.preview));
       
       return data.urls || [];
@@ -246,10 +241,8 @@ export default function DynamicForm() {
     try {
       setIsUploading(true);
       
-      // Upload images first
       const imageUrls = await uploadImages();
       
-      // Submit form data
       const response = await fetch('/api/ads', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -262,7 +255,6 @@ export default function DynamicForm() {
         throw new Error(data.error || 'Submission failed');
       }
       
-      // Reset form on success
       setFormData({
         title: '',
         description: '',
@@ -298,7 +290,6 @@ export default function DynamicForm() {
         <p>Fill out the form below to list your item for sale</p>
       </div>
       
-      {/* Form Steps */}
       <div className="form-steps">
         {[1, 2, 3, 4, 5].map(step => (
           <div 

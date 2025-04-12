@@ -3,7 +3,7 @@ import React from 'react'
 
 const AdsCreate = () => {
   return (
-    <div>AdsCreate
+    <div>
         <DynamicForm/>
     </div>
   )
