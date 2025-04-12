@@ -1,5 +1,7 @@
 import { connectDB } from '@/lib/mongoose';
 import Ad from '@/models/Ad';
+import County from '@/models/County'; // ✅ Import it
+import Subcounty from '@/models/Subcounty'; // ✅ Import it
 
 // CREATE AD
 export async function POST(req) {
@@ -20,6 +22,7 @@ export async function GET(req) {
   const minPrice = searchParams.get("minPrice");
   const maxPrice = searchParams.get("maxPrice");
   const sortBy = searchParams.get("sortBy");
+  const packageType = searchParams.get("package");
 
   const filter = {};
 
@@ -27,10 +30,14 @@ export async function GET(req) {
   if (countyId) filter.countyId = countyId;
   if (minPrice) filter.price = { ...filter.price, $gte: Number(minPrice) };
   if (maxPrice) filter.price = { ...filter.price, $lte: Number(maxPrice) };
+  if (packageType) filter.package = packageType; // ✅ Apply the package filter
 
   const sortOption = sortBy === "views" ? { views: -1 } : { createdAt: -1 };
 
-  const ads = await Ad.find(filter).sort(sortOption);
+  const ads = await Ad.find(filter)
+  .populate('countyId', 'name')
+  .populate('subcountyId', 'name')
+  .sort(sortOption);
 
   return Response.json(ads);
 }

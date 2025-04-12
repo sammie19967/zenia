@@ -12,8 +12,14 @@ const adSchema = new mongoose.Schema({
   categoryId: mongoose.Schema.Types.ObjectId,
   subcategoryId: mongoose.Schema.Types.ObjectId,
   brandId: mongoose.Schema.Types.ObjectId,
-  countyId: mongoose.Schema.Types.ObjectId,
-  subcountyId: mongoose.Schema.Types.ObjectId,
+  countyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "County",
+  },
+  subcountyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Subcounty",
+  },
   images: [String], // URLs or filenames
 
   package: String,
