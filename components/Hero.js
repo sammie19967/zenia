@@ -7,7 +7,7 @@ import '@/styles/Hero.css';
 export default function Hero() {
   const [text, setText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const phrases = ["BUY", "SELL", "CONNECT"];
+  const phrases = ["DISCOVER", "EXPLORE", "CONNECT"];
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
   const [typingSpeed, setTypingSpeed] = useState(150);
@@ -38,24 +38,31 @@ export default function Hero() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Handle search functionality here
     console.log("Searching for:", searchQuery);
-    // You can redirect to search page or filter results
   };
 
   return (
     <section className="zenia-hero">
+      {/* Animated Bubbles Background */}
+      <div className="zenia-bubbles">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="zenia-bubble" />
+        ))}
+      </div>
+      
       <div className="zenia-hero-content">
         <h1 className="zenia-hero-title">
-          Welcome to <span className="zenia-brand-name">Zenia Kenyorc</span>
+          Welcome to <span className="zenia-brand-name">Zenia</span>
         </h1>
-        <h2 className="zenia-hero-subtitle">Kenya's #1 marketplace</h2>
+        <h2 className="zenia-hero-subtitle">
+          Your premier marketplace for unique finds and great deals
+        </h2>
+        
         <div className="zenia-typewriter">
           <span className="zenia-typewriter-text">{text}</span>
-          <span className="zenia-typewriter-cursor">|</span>
+          <span className="zenia-typewriter-cursor"></span>
         </div>
 
-        {/* Search Bar */}
         <form onSubmit={handleSearch} className="zenia-search-container">
           <div className="zenia-search-bar">
             <input
@@ -76,7 +83,7 @@ export default function Hero() {
             Browse Listings <ArrowRight size={18} />
           </Link>
           <Link href="/ads/create" className="zenia-hero-btn-secondary">
-            Sell Now
+            Start Selling
           </Link>
         </div>
       </div>

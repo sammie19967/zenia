@@ -1,27 +1,10 @@
-/* styles/SponsoredAds.css */
+/* SponsoredAds.css */
 
-/* Color Scheme */
-:root {
-  --primary: #2563eb;       /* Blue-600 */
-  --primary-hover: #1d4ed8;  /* Blue-700 */
-  --secondary: #f59e0b;      /* Amber-500 */
-  --secondary-dark: #d97706; /* Amber-600 */
-  --text: #1f2937;          /* Gray-800 */
-  --text-light: #6b7280;     /* Gray-500 */
-  --bg-light: #f9fafb;       /* Gray-50 */
-  --border: #e5e7eb;         /* Gray-200 */
-  --white: #ffffff;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* Base Styles */
 .zen-sponsored-section {
-  margin: 3rem 0;
-  padding: 0 1rem;
+  padding: 2rem 1rem;
   max-width: 1800px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
+  position: relative;
 }
 
 .zen-sponsored-header {
@@ -33,31 +16,15 @@
 }
 
 .zen-sponsored-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--text);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text);
   margin: 0;
-  position: relative;
-  display: inline-block;
-  text-transform: capitalize;
 }
 
 .zen-title-highlight {
-  color: var(--primary);
-  position: relative;
-  z-index: 1;
-}
-
-.zen-title-highlight::after {
-  content: '';
-  position: absolute;
-  bottom: 2px;
-  left: 0;
-  width: 100%;
-  height: 8px;
-  background-color: rgba(37, 99, 235, 0.2);
-  z-index: -1;
-  border-radius: 4px;
+  color: var(--color-secondary);
+  font-weight: 700;
 }
 
 .zen-nav-controls {
@@ -66,35 +33,29 @@
 }
 
 .zen-nav-button {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
-  background-color: var(--white);
-  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
 }
 
 .zen-nav-button:hover {
-  background-color: var(--bg-light);
-  border-color: #d1d5db;
-  box-shadow: var(--shadow-md);
+  background-color: var(--color-secondary);
+  transform: scale(1.05);
 }
 
-.zen-nav-button:active {
-  transform: scale(0.95);
+.zen-nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.zen-nav-icon {
-  color: var(--primary);
-  stroke-width: 2px;
-}
-
-/* Carousel Styles */
 .zen-sponsored-carousel {
   position: relative;
   overflow: hidden;
@@ -104,39 +65,37 @@
 .zen-sponsored-track {
   display: grid;
   gap: 1rem;
-  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
+  transition: transform 0.5s ease;
+  width: 100%;
 }
 
 .zen-sponsored-card {
-  background: var(--white);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--shadow);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  background: var(--color-background);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid var(--color-border);
 }
 
 .zen-sponsored-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 .zen-card-link {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   z-index: 1;
 }
 
 .zen-card-media {
   position: relative;
-  padding-top: 100%; /* Square aspect ratio for better mobile display */
+  padding-top: 100%; /* 1:1 Aspect Ratio */
   overflow: hidden;
 }
 
@@ -147,7 +106,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.3s ease;
 }
 
 .zen-sponsored-card:hover .zen-product-image {
@@ -156,104 +115,92 @@
 
 .zen-premium-badge {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: linear-gradient(135deg, var(--secondary), var(--secondary-dark));
-  color: var(--text);
-  padding: 4px 10px;
-  border-radius: 20px;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
   font-size: 0.75rem;
   font-weight: 600;
+  z-index: 2;
   display: flex;
   align-items: center;
-  z-index: 2;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .zen-badge-glow {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.3);
-  animation: pulse 2s infinite;
-  z-index: -1;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  margin-left: 0.25rem;
+  animation: pulse 1.5s infinite;
 }
 
 @keyframes pulse {
-  0% { opacity: 0.5; }
-  50% { opacity: 0.8; }
-  100% { opacity: 0.5; }
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
 
 .zen-card-content {
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
+  padding: 0.75rem;
   position: relative;
   z-index: 2;
 }
 
 .zen-product-title {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text);
-  margin: 0 0 0.5rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin: 0 0 0.25rem 0;
+  color: var(--color-text);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
-  min-height: 2.5rem;
   text-transform: capitalize;
 }
 
 .zen-product-meta {
-  margin-top: auto;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
 .zen-product-price {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-secondary);
 }
 
 .zen-product-location {
-  font-size: 0.8rem;
-  color: var(--text-light);
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
 }
 
 .zen-product-location svg {
-  width: 14px;
-  height: 14px;
-  fill: var(--text-light);
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
-/* Loading State */
 .zen-sponsored-loading {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem;
-  text-align: center;
+  padding: 2rem;
+  color: var(--color-text-light);
 }
 
 .zen-spinner {
-  width: 50px;
-  height: 50px;
-  border: 4px solid var(--border);
-  border-top: 4px solid var(--primary);
+  border: 3px solid rgba(0, 0, 0, 0.1);
   border-radius: 50%;
+  border-top: 3px solid var(--color-secondary);
+  width: 30px;
+  height: 30px;
   animation: spin 1s linear infinite;
   margin-bottom: 1rem;
 }
@@ -263,115 +210,50 @@
   100% { transform: rotate(360deg); }
 }
 
-.zen-sponsored-loading p {
-  color: var(--text-light);
-  font-size: 1rem;
-  margin-top: 0.5rem;
-  text-transform: capitalize;
-}
-
-/* Empty State */
 .zen-sponsored-empty {
   text-align: center;
-  padding: 3rem;
-  background-color: var(--bg-light);
-  border-radius: 12px;
-  border: 1px dashed var(--border);
-}
-
-.zen-sponsored-empty p {
-  color: var(--text-light);
-  font-size: 1rem;
-  margin-bottom: 1rem;
-  text-transform: capitalize;
+  padding: 2rem;
+  color: var(--color-text-light);
 }
 
 .zen-create-link {
   display: inline-block;
-  padding: 0.75rem 1.5rem;
-  background-color: var(--primary);
-  color: var(--white);
-  border-radius: 6px;
-  font-weight: 500;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-primary);
+  color: white;
+  border-radius: 0.25rem;
   text-decoration: none;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  text-transform: capitalize;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .zen-create-link:hover {
-  background-color: var(--primary-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+  background-color: var(--color-secondary);
 }
 
-/* Responsive Adjustments */
-@media (min-width: 480px) {
-  .zen-card-media {
-    padding-top: 75%; /* 4:3 aspect ratio on larger screens */
-  }
-  
-  .zen-sponsored-card {
-    min-width: 180px;
-  }
-}
-
-@media (min-width: 768px) {
+/* Responsive adjustments */
+@media (max-width: 1199px) {
   .zen-sponsored-title {
-    font-size: 1.5rem;
-  }
-  
-  .zen-product-title {
-    font-size: 1.05rem;
-  }
-  
-  .zen-product-price {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
   }
 }
 
-@media (min-width: 1200px) {
-  .zen-sponsored-section {
-    padding: 0 1.5rem;
+@media (max-width: 767px) {
+  .zen-sponsored-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
   }
   
-  .zen-sponsored-title {
-    font-size: 1.75rem;
+  .zen-nav-controls {
+    align-self: flex-end;
   }
 }
 
-/* Mobile-specific adjustments */
 @media (max-width: 479px) {
-  .zen-sponsored-track {
-    gap: 0.75rem; /* Increased gap between cards */
-  }
-  
-  .zen-sponsored-card {
-    min-width: 160px; /* Slightly wider cards */
-    margin: 0 0.25rem; /* Additional horizontal spacing */
-  }
-  
-  .zen-card-content {
-    padding: 0.75rem;
-  }
-  
-  .zen-product-title {
-    font-size: 0.9rem;
-    min-height: 2.2rem;
-  }
-  
-  .zen-product-price {
-    font-size: 1rem;
-  }
-  
-  .zen-product-location {
-    font-size: 0.75rem;
-  }
-  
-  .zen-premium-badge {
-    font-size: 0.65rem;
-    padding: 3px 8px;
-    top: 8px;
-    right: 8px;
+  .zen-sponsored-title {
+    font-size: 1.1rem;
   }
   
   .zen-nav-button {
@@ -384,8 +266,19 @@
     height: 18px;
   }
   
-  .zen-sponsored-header {
-    padding: 0 0.25rem;
-    margin-bottom: 1rem;
+  .zen-card-content {
+    padding: 0.5rem;
+  }
+  
+  .zen-product-title {
+    font-size: 0.8125rem;
+  }
+  
+  .zen-product-price {
+    font-size: 0.8125rem;
+  }
+  
+  .zen-product-location {
+    font-size: 0.6875rem;
   }
 }

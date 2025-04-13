@@ -11,7 +11,7 @@ const page = () => {
       <Navbar/>
       <Hero/>
       <SponsoredAds/>
-      <AdList />
+      
     </div>
   )
 }

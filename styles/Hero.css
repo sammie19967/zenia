@@ -1,255 +1,364 @@
 /* Hero.css */
+
 .zenia-hero {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  width: auto;
+  max-height: 75vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 2rem 1rem;
+}
+
+.zenia-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, 
+    rgba(30, 58, 138, 0.9) 0%, 
+    rgba(239, 68, 68, 0.85) 100%);
+  z-index: -2;
+}
+
+.zenia-hero-content {
+  max-width: 1200px;
+  width: 100%;
+  text-align: center;
+  padding: 2rem;
+  color: white;
+  position: relative;
+}
+
+/* Animated Bubbles Background */
+.zenia-bubbles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.zenia-bubble {
+  position: absolute;
+  bottom: -100px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  animation: float-up 15s infinite ease-in;
+}
+
+.zenia-bubble:nth-child(1) {
+  width: 40px;
+  height: 40px;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 16s;
+}
+
+.zenia-bubble:nth-child(2) {
+  width: 20px;
+  height: 20px;
+  left: 20%;
+  animation-delay: 2s;
+  animation-duration: 12s;
+}
+
+.zenia-bubble:nth-child(3) {
+  width: 50px;
+  height: 50px;
+  left: 35%;
+  animation-delay: 4s;
+  animation-duration: 18s;
+}
+
+.zenia-bubble:nth-child(4) {
+  width: 80px;
+  height: 80px;
+  left: 50%;
+  animation-delay: 0s;
+  animation-duration: 22s;
+}
+
+.zenia-bubble:nth-child(5) {
+  width: 35px;
+  height: 35px;
+  left: 55%;
+  animation-delay: 6s;
+  animation-duration: 14s;
+}
+
+.zenia-bubble:nth-child(6) {
+  width: 45px;
+  height: 45px;
+  left: 65%;
+  animation-delay: 3s;
+  animation-duration: 16s;
+}
+
+.zenia-bubble:nth-child(7) {
+  width: 25px;
+  height: 25px;
+  left: 75%;
+  animation-delay: 1s;
+  animation-duration: 13s;
+}
+
+.zenia-bubble:nth-child(8) {
+  width: 80px;
+  height: 80px;
+  left: 80%;
+  animation-delay: 5s;
+  animation-duration: 20s;
+}
+
+@keyframes float-up {
+  0% {
+    bottom: -100px;
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(100px);
+  }
+  100% {
+    bottom: 100%;
+    transform: translateX(-100px);
+  }
+}
+
+/* Typography */
+.zenia-hero-title {
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 800;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.zenia-brand-name {
+  background: linear-gradient(90deg, #FFFFFF, #F0F0F0);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.zenia-hero-subtitle {
+  font-size: clamp(1rem, 3vw, 1.5rem);
+  font-weight: 400;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Typewriter Effect */
+.zenia-typewriter {
+  min-height: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  
+}
+
+.zenia-typewriter-text {
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: rgb(238, 192, 41);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.zenia-typewriter-cursor {
+  display: inline-block;
+  width: 4px;
+  height: 1.5em;
+  background-color: rgb(42, 223, 87);
+  margin-left: 8px;
+  animation: blink 0.7s infinite;
+  vertical-align: middle;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Search Bar */
+.zenia-search-container {
+  max-width: 700px;
+  margin: 0 auto 3rem;
+  width: 100%;
+}
+
+.zenia-search-bar {
+  display: flex;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 50px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.zenia-search-bar:focus-within {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.zenia-search-input {
+  flex: 1;
+  padding: 1rem 1.5rem;
+  border: none;
+  outline: none;
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  background: transparent;
+  color: white;
+}
+
+.zenia-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+  font-style: italic;
+}
+
+.zenia-search-button {
+  background: white;
+  color: var(--color-primary);
+  border: none;
+  padding: 0 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
+
+.zenia-search-button:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: scale(1.02);
+}
+
+/* Buttons */
+.zenia-hero-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+
+.zenia-hero-btn-primary,
+.zenia-hero-btn-secondary {
+  padding: 1rem 2rem;
+  border-radius: 50px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: all 0.3s ease;
+  font-size: clamp(0.9rem, 3vw, 1.1rem);
+}
+
+.zenia-hero-btn-primary {
+  background: white;
+  color: var(--color-primary);
+  border: 2px solid white;
+}
+
+.zenia-hero-btn-primary:hover {
+  background: transparent;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.zenia-hero-btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(5px);
+}
+
+.zenia-hero-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .zenia-hero {
     min-height: 40vh;
-    background-color: var(--color-background);
-    color: var(--color-text);
-    padding: 2rem;
-    text-align: center;
+    padding: 1rem;
   }
-  
+
   .zenia-hero-content {
-    max-width: 800px;
-    width: 100%;
-    padding: 2rem;
+    padding: 1.5rem;
   }
-  
-  .zenia-hero-title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    line-height: 1.2;
-  }
-  
-  .zenia-brand-name {
-    color: var(--color-primary);
-  }
-  
-  .zenia-hero-subtitle {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    color: var(--color-text-light);
-  }
-  
+
   .zenia-typewriter {
-    display: inline-block;
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--color-secondary);
-    margin-bottom: 1.5rem;
-    height: 2.5rem;
+    min-height: 2.5rem;
+    margin: 1.5rem 0;
   }
-  
-  .zenia-typewriter-cursor {
-    animation: zenia-blink 1s infinite;
-  }
-  
-  @keyframes zenia-blink {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0; }
-  }
-  
-  /* Search Bar Styles */
+
   .zenia-search-container {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto 2rem;
+    margin-bottom: 2rem;
   }
-  
-  .zenia-search-bar {
-    display: flex;
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border: 1px solid var(--color-border);
-  }
-  
+
   .zenia-search-input {
-    flex: 1;
-    padding: 0.875rem 1.25rem;
-    border: none;
-    outline: none;
-    font-size: 1rem;
+    padding: 0.8rem 1.2rem;
   }
-  
+
   .zenia-search-button {
-    background-color: var(--color-primary);
-    color: white;
-    border: none;
-    padding: 0 1.25rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+    padding: 0 1.2rem;
   }
-  
-  .zenia-search-button:hover {
-    background-color: var(--color-secondary);
-  }
-  
+
   .zenia-hero-buttons {
-    display: flex;
-    justify-content: center;
     gap: 1rem;
     margin-top: 1.5rem;
   }
-  
-  .zenia-hero-btn-primary {
-    background-color: var(--color-primary);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    transition: all 0.3s ease;
-    white-space: nowrap;
-  }
-  
-  .zenia-hero-btn-primary:hover {
-    background-color: var(--color-secondary);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-  }
-  
+
+  .zenia-hero-btn-primary,
   .zenia-hero-btn-secondary {
-    background-color: transparent;
-    color: var(--color-primary);
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    border: 2px solid var(--color-primary);
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    white-space: nowrap;
+    padding: 0.8rem 1.5rem;
   }
-  
-  .zenia-hero-btn-secondary:hover {
-    background-color: var(--color-primary);
-    color: white;
-    transform: translateY(-2px);
+}
+
+@media (max-width: 480px) {
+  .zenia-hero {
+    min-height: 90vh;
   }
-  
-  /* Responsive adjustments */
-  @media (max-width: 1024px) {
-    .zenia-hero-title {
-      font-size: 2.25rem;
-    }
-    
-    .zenia-hero-subtitle {
-      font-size: 1.35rem;
-    }
-    
-    .zenia-typewriter {
-      font-size: 1.75rem;
-    }
-    
-    .zenia-search-container {
-      max-width: 500px;
-    }
+
+  .zenia-hero-title {
+    font-size: 2.2rem;
   }
-  
-  @media (max-width: 768px) {
-    .zenia-hero-title {
-      font-size: 2rem;
-    }
-  
-    .zenia-hero-subtitle {
-      font-size: 1.25rem;
-    }
-  
-    .zenia-typewriter {
-      font-size: 1.5rem;
-    }
-    
-    .zenia-hero-buttons {
-      gap: 0.75rem;
-    }
-    
-    .zenia-hero-btn-primary,
-    .zenia-hero-btn-secondary {
-      padding: 0.75rem 1.25rem;
-      font-size: 0.95rem;
-    }
-    
-    .zenia-search-input {
-      padding: 0.75rem 1rem;
-    }
-    
-    .zenia-search-button {
-      padding: 0 1rem;
-    }
+
+  .zenia-typewriter-text {
+    font-size: 1.3rem;
   }
-  
-  @media (max-width: 480px) {
-    .zenia-hero {
-      padding: 1.5rem;
-    }
-    
-    .zenia-hero-title {
-      font-size: 1.75rem;
-    }
-  
-    .zenia-hero-subtitle {
-      font-size: 1.1rem;
-    }
-  
-    .zenia-typewriter {
-      font-size: 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-    
-    .zenia-hero-buttons {
-      gap: 0.5rem;
-    }
-    
-    .zenia-hero-btn-primary,
-    .zenia-hero-btn-secondary {
-      padding: 0.6rem 1rem;
-      font-size: 0.85rem;
-    }
-    
-    .zenia-search-container {
-      margin-bottom: 1.5rem;
-    }
-    
-    .zenia-search-input {
-      font-size: 0.9rem;
-      padding: 0.6rem 0.8rem;
-    }
+
+  .zenia-search-input {
+    padding: 0.7rem 1rem;
   }
-  
-  @media (max-width: 375px) {
-    .zenia-hero-buttons {
-      flex-wrap: wrap;
-    }
-    
-    .zenia-hero-btn-primary,
-    .zenia-hero-btn-secondary {
-      flex: 1 1 100%;
-      justify-content: center;
-    }
-    
-    .zenia-search-bar {
-      flex-direction: column;
-      background: transparent;
-      box-shadow: none;
-      border: none;
-      gap: 0.5rem;
-    }
-    
-    .zenia-search-input {
-      border-radius: 8px;
-      border: 1px solid var(--color-border);
-    }
-    
-    .zenia-search-button {
-      border-radius: 8px;
-      padding: 0.6rem;
-      width: 100%;
-    }
+
+  .zenia-hero-buttons {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
   }
+
+  .zenia-hero-btn-primary,
+  .zenia-hero-btn-secondary {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+}

@@ -61,91 +61,108 @@ export default function AdFilter({ onFilter }) {
 
   return (
     <form onSubmit={handleSubmit} className="filter-form">
+      <div className="filter-header">
+        <h3>Filter Listings</h3>
+      </div>
+      
       <div className="filter-grid">
-        <div className="filter-group">
-          <label htmlFor="categoryId">Category</label>
-          <select 
-            id="categoryId"
-            name="categoryId" 
-            value={filters.categoryId} 
-            onChange={handleChange}
-            className="filter-select"
-          >
-            <option value="">All Categories</option>
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>{cat.name}</option>
-            ))}
-          </select>
+        <div className="filter-section">
+          <h4 className="filter-section-title">Category & Location</h4>
+          <div className="filter-group">
+            <label htmlFor="categoryId">Category</label>
+            <select 
+              id="categoryId"
+              name="categoryId" 
+              value={filters.categoryId} 
+              onChange={handleChange}
+              className="filter-select"
+            >
+              <option value="">All Categories</option>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filter-group">
+            <label htmlFor="countyId">County</label>
+            <select 
+              id="countyId"
+              name="countyId" 
+              value={filters.countyId} 
+              onChange={handleChange}
+              className="filter-select"
+            >
+              <option value="">All Counties</option>
+              {counties.map((county) => (
+                <option key={county._id} value={county._id}>{county.name}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
-        <div className="filter-group">
-          <label htmlFor="countyId">County</label>
-          <select 
-            id="countyId"
-            name="countyId" 
-            value={filters.countyId} 
-            onChange={handleChange}
-            className="filter-select"
-          >
-            <option value="">All Counties</option>
-            {counties.map((county) => (
-              <option key={county._id} value={county._id}>{county.name}</option>
-            ))}
-          </select>
+        <div className="filter-section">
+          <h4 className="filter-section-title">Price Range</h4>
+          <div className="price-fields">
+            <div className="filter-group">
+              <label htmlFor="minPrice">Min Price (Ksh)</label>
+              <input
+                id="minPrice"
+                type="number"
+                name="minPrice"
+                placeholder="Minimum"
+                value={filters.minPrice}
+                onChange={handleChange}
+                className="filter-input"
+                min="0"
+              />
+            </div>
+            <div className="filter-group">
+              <label htmlFor="maxPrice">Max Price (Ksh)</label>
+              <input
+                id="maxPrice"
+                type="number"
+                name="maxPrice"
+                placeholder="Maximum"
+                value={filters.maxPrice}
+                onChange={handleChange}
+                className="filter-input"
+                min="0"
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="filter-group">
-          <label htmlFor="minPrice">Min Price (Ksh)</label>
-          <input
-            id="minPrice"
-            type="number"
-            name="minPrice"
-            placeholder="Any"
-            value={filters.minPrice}
-            onChange={handleChange}
-            className="filter-input"
-            min="0"
-          />
-        </div>
-
-        <div className="filter-group">
-          <label htmlFor="maxPrice">Max Price (Ksh)</label>
-          <input
-            id="maxPrice"
-            type="number"
-            name="maxPrice"
-            placeholder="Any"
-            value={filters.maxPrice}
-            onChange={handleChange}
-            className="filter-input"
-            min="0"
-          />
-        </div>
-
-        <div className="filter-group">
-          <label htmlFor="sortBy">Sort By</label>
-          <select 
-            id="sortBy"
-            name="sortBy" 
-            value={filters.sortBy} 
-            onChange={handleChange}
-            className="filter-select"
-          >
-            <option value="latest">Latest</option>
-            <option value="views">Most Viewed</option>
-          </select>
+        <div className="filter-section">
+          <h4 className="filter-section-title">Sorting</h4>
+          <div className="filter-group">
+            <label htmlFor="sortBy">Sort By</label>
+            <select 
+              id="sortBy"
+              name="sortBy" 
+              value={filters.sortBy} 
+              onChange={handleChange}
+              className="filter-select"
+            >
+              <option value="latest">Latest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+              <option value="views">Most Viewed</option>
+            </select>
+          </div>
         </div>
 
         <div className="filter-actions">
-          <button type="submit" className="filter-button apply">
-            Apply Filters
-          </button>
           <button 
             type="button" 
             onClick={handleReset}
             className="filter-button reset"
           >
             Reset
+          </button>
+          <button type="submit" className="filter-button apply">
+            Apply Filters
           </button>
         </div>
       </div>

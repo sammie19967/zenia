@@ -1,4 +1,5 @@
 // app/ads/[id]/page.jsx
+import Navbar from "@/components/Navbar";
 import Image from "next/image";
 
 export default async function AdViewPage({ params }) {
@@ -15,6 +16,8 @@ export default async function AdViewPage({ params }) {
   const ad = await res.json();
 
   return (
+    <div>
+      <Navbar/>
     <div style={{ padding: "2rem", maxWidth: "900px", margin: "0 auto" }}>
       <h1>{ad.title}</h1>
       <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
@@ -36,6 +39,7 @@ export default async function AdViewPage({ params }) {
         <p><strong>Package:</strong> {ad.package}</p>
         <p><strong>Created At:</strong> {new Date(ad.createdAt).toLocaleString()}</p>
       </div>
+    </div>
     </div>
   );
 }
