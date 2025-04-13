@@ -1,185 +1,196 @@
 /* AdFilter.css */
-
-.filter-form {
-  width: auto;
-  max-width: 1200px;
-  margin: 0 auto;
-  background-color: var(--color-background);
-  border-radius: 0.75rem;
-  padding: 1.75rem;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  border: 1px solid var(--color-border);
-  margin-bottom: 2.5rem;
+.filter-sidebar-container {
+  display: flex;
+  gap: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
-.filter-header {
-  margin-bottom: 1.5rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--color-border);
+.filter-sidebar {
+  width: 260px;
+  background-color: #fff;
+  border-right: 1px solid #eaeaea;
+  height: 100%;
+  overflow-y: auto;
+  max-height: 80vh;
 }
 
-.filter-header h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-primary);
+.sidebar-header {
+  padding: 16px;
+  border-bottom: 1px solid #eaeaea;
+  background-color: #f7f7f7;
+}
+
+.sidebar-header h3 {
   margin: 0;
+  font-size: 18px;
+  color: #333;
 }
 
-.filter-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.75rem;
+.category-list {
+  padding: 12px 0;
 }
 
-.filter-section {
-  margin-bottom: 1.5rem;
+.category-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.filter-section-title {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px dashed var(--color-border);
+.category-item:hover {
+  background-color: #f5f5f5;
 }
 
-.filter-group {
-  margin-bottom: 1.25rem;
+.category-item.active {
+  background-color: #e6f7ff;
+  border-left: 3px solid #1890ff;
 }
 
-.filter-group label {
+.category-icon {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.subcategory-section,
+.location-section {
+  border-top: 1px solid #eaeaea;
+  padding: 16px;
+}
+
+.subcategory-section h4,
+.location-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #555;
+}
+
+.subcategory-list,
+.county-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.subcategory-item,
+.county-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.subcategory-item:hover,
+.county-item:hover {
+  background-color: #f5f5f5;
+}
+
+.subcategory-item.active,
+.county-item.active {
+  background-color: #e6f7ff;
+  color: #1890ff;
+}
+
+.filter-controls {
+  flex: 1;
+  padding: 20px;
+}
+
+.price-filter,
+.sort-filter {
+  margin-bottom: 24px;
+}
+
+.price-filter h4,
+.sort-filter h4 {
+  margin: 0 0 12px 0;
+  font-size: 15px;
+  color: #555;
+}
+
+.price-inputs {
+  display: flex;
+  gap: 12px;
+}
+
+.input-group {
+  flex: 1;
+}
+
+.input-group label {
   display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text);
-  margin-bottom: 0.5rem;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #666;
 }
 
-.filter-select,
-.filter-input {
+.input-group input {
   width: 100%;
-  max-width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--color-border);
-  border-radius: 0.5rem;
-  background-color: var(--color-background);
-  color: var(--color-text);
-  font-size: 0.9375rem;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.filter-select:focus,
-.filter-input:focus {
-  outline: none;
-  border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
-}
-
-.filter-select {
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1rem;
-}
-
-.filter-input::placeholder {
-  color: var(--color-text-light);
-  opacity: 0.7;
-}
-
-.price-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+.sort-filter select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
 }
 
 .filter-actions {
   display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  margin-top: 1rem;
-  grid-column: 1 / -1;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
+  gap: 12px;
+  margin-top: 24px;
 }
 
-.filter-button {
-  padding: 0.75rem 1.75rem;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9375rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.reset-btn,
+.apply-btn {
+  padding: 10px 20px;
   border: none;
-  min-width: 120px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
 }
 
-.filter-button.apply {
-  background-color: var(--color-primary);
+.reset-btn {
+  background-color: #f5f5f5;
+  color: #666;
+}
+
+.reset-btn:hover {
+  background-color: #e8e8e8;
+}
+
+.apply-btn {
+  background-color: #1890ff;
   color: white;
 }
 
-.filter-button.apply:hover {
-  background-color: #1a2f6d;
-  transform: translateY(-2px);
-  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.2);
-}
-
-.filter-button.reset {
-  background-color: transparent;
-  color: var(--color-primary);
-  border: 1px solid var(--color-primary);
-}
-
-.filter-button.reset:hover {
-  background-color: rgba(30, 58, 138, 0.05);
-  transform: translateY(-2px);
+.apply-btn:hover {
+  background-color: #096dd9;
 }
 
 /* Responsive adjustments */
-@media (max-width: 1024px) {
-  .filter-grid {
-    gap: 1.25rem;
-  }
-}
-
 @media (max-width: 768px) {
-  .filter-form {
-    padding: 1.5rem;
+  .filter-sidebar-container {
+    flex-direction: column;
   }
-
-  .filter-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .price-fields {
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  .filter-actions {
-    justify-content: stretch;
-  }
-
-  .filter-button {
-    flex: 1;
-  }
-}
-
-@media (max-width: 480px) {
-  .filter-form {
-    padding: 1.25rem;
-  }
-
-  .filter-button {
-    padding: 0.75rem 1rem;
-    min-width: auto;
+  
+  .filter-sidebar {
+    width: 100%;
+    max-height: 400px;
   }
 }
