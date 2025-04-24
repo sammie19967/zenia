@@ -1,18 +1,19 @@
 import mongoose from 'mongoose';
 
+// Town schema should be an array of strings, not an embedded document
 const TownSchema = new mongoose.Schema({
-  type: String
+  name: { type: String, required: true }
 }, { _id: false });
 
 const SubcountySchema = new mongoose.Schema({
-  name: String,
-  towns: [String],
+  name: { type: String, required: true },
+  towns: { type: [String], default: [] } // Make towns an array of strings
 }, { _id: false });
 
 const CountySchema = new mongoose.Schema({
-  id: Number, // This is your custom numeric ID
-  name: String,
-  subcounties: [SubcountySchema],
+  id: { type: Number, required: true, unique: true },
+  name: { type: String, required: true },
+  subcounties: { type: [SubcountySchema], default: [] }
 });
 
 export default mongoose.models.County || mongoose.model('County', CountySchema);
