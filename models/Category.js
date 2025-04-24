@@ -1,11 +1,14 @@
 import mongoose from 'mongoose';
 
-const CategorySchema = new mongoose.Schema({
+const SubcategorySchema = new mongoose.Schema({
   name: { type: String, required: true },
-  icon: { type: String }, // URL or path to icon image
+  icon: { type: String, required: true },
+}, { _id: false });
 
-}, {
-  timestamps: true,
+const CategorySchema = new mongoose.Schema({
+  name: { type: String, required: true, unique: true },
+  icon: { type: String, required: true },
+  subcategories: { type: [SubcategorySchema], default: [] },
 });
 
 export default mongoose.models.Category || mongoose.model('Category', CategorySchema);
