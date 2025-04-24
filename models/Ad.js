@@ -21,8 +21,12 @@ const adSchema = new mongoose.Schema({
     ref: "Subcounty",
   },
   images: [String], // URLs or filenames
-
   package: String,
+
+  views: {
+    type: Number,
+    default: 0,
+  },
 }, { timestamps: true });
 
 export default mongoose.models.Ad || mongoose.model('Ad', adSchema);
