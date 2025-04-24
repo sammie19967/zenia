@@ -1,7 +1,7 @@
 import { connectDB } from '@/lib/mongoose';
 import Ad from '@/models/Ad';
 import County from '@/models/County'; // ✅ Import it
-import Subcounty from '@/models/Subcounty'; // ✅ Import it
+
 
 // CREATE AD
 export async function POST(req) {
