@@ -7,8 +7,7 @@ export async function GET() {
   await connectDB();
 
   await Category.deleteMany();
-  await Subcategory.deleteMany();
-  await Brand.deleteMany();
+
 
   const categoriesData = [
     {
