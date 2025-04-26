@@ -1,14 +1,18 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const SubcategorySchema = new mongoose.Schema({
+const subcategorySchema = new mongoose.Schema({
   name: { type: String, required: true },
-  icon: { type: String, required: true },
-}, { _id: false });
-
-const CategorySchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true },
-  icon: { type: String, required: true },
-  subcategories: { type: [SubcategorySchema], default: [] },
+  icon: { type: String },
+  brands: [{ type: String }], // Optional: only some subcategories will have brands
+  customFields: [{ type: String }] // Optional: fields unique to this subcategory
 });
 
-export default mongoose.models.Category || mongoose.model('Category', CategorySchema);
+const categorySchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  icon: { type: String },
+  subcategories: [subcategorySchema] // Embedded subcategories
+});
+
+const Category = mongoose.model('Category', categorySchema);
+
+export default Category;
