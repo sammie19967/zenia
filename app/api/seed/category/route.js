@@ -1,0 +1,100 @@
+import { connectDB } from '@/lib/mongoose';
+import Category from '@/models/Category';
+
+import Brand from '@/models/Brand';
+
+export async function GET() {
+  await connectDB();
+
+  await Category.deleteMany();
+
+
+  const categoriesData = [
+    
+      {
+        "name": "Automobiles",
+        "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/vehicles.png",
+        "subcategories": [
+          { "name": "Buses", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/bus.png" },
+          { "name": "Sedans & SUVs", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/car.png" },
+          { "name": "Heavy Duty", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/heavy_equipment.png" },
+          { "name": "Motorcycles", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/motorbikes.png" },
+          { "name": "Haulers & Trailers", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/trailers.png" },
+          { "name": "Freight Trucks", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/trucks.png" },
+          { "name": "Watercraft", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/water_vehicles.png" }
+        ]
+      },
+      {
+          "name": "Tech & Devices",
+          "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/electronics.png",
+          "subcategories": [
+            { "name": "Mobile & Tablets", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/phones.png" },
+            { "name": "Printers & Scanners", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/printers.png" },
+            { "name": "Surveillance Systems", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/cctv.png" },
+            { "name": "TV & Screens", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/tv.png" },
+            { "name": "Gaming Gear", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/gaming.png" },
+            { "name": "Smart Watches & Wearables", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/wearables.png" },
+            { "name": "Laptops & Notebooks", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/laptops.png" },
+            { "name": "Computer Accessories", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/computer_accessories.png" },
+            { "name": "Networking Devices", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/networking.png" },
+            { "name": "Home Audio & Theater", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/audio.png" },
+            { "name": "Drones & Cameras", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/cameras.png" }
+          ]
+        },
+      {
+        "name": "Properties",
+        "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/real_estate.png",
+        "subcategories": [
+          { "name": "Shops for Rent", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/commercial_rent.png" },
+          { "name": "Shops for Lease", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/commercial_lease.png" },
+          { "name": "Event Spaces", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/event_venues.png" },
+          { "name": "Homes for Rent", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/house_rent.png" },
+          { "name": "Homes for Sale", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/house_sale.png" },
+          { "name": "Plots for Sale", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/plot_sale.png" },
+          { "name": "Plots for Lease", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/plot_rent.png" }
+        ]
+      },
+      {
+        "name": "Style & Trends",
+        "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/fashion.png",
+        "subcategories": [
+          { "name": "Men’s Apparel", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/men.png" },
+          { "name": "Women’s Fashion", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/women.png" },
+          { "name": "Shoes & Sneakers", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/shoes.png" },
+          { "name": "Jewelry & Watches", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/jewelry.png" },
+          { "name": "Kids Wear", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/kids.png" },
+          { "name": "Bags & Backpacks", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/bags.png" },
+          { "name": "Lingerie & Nightwear", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/lingerie.png" }
+        ]
+      },
+      {
+        "name": "Beauty & Care",
+        "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/beauty.png",
+        "subcategories": [
+          { "name": "Skincare Essentials", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/skincare.png" },
+          { "name": "Makeup Kits", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/makeup.png" },
+          { "name": "Hair Products", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/hair.png" },
+          { "name": "Fragrances", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/fragrance.png" },
+          { "name": "Personal Hygiene", "icon": "https://res.cloudinary.com/your-cloud-name/image/upload/v1/home/category-icons/hygiene.png" }
+        ]
+      }
+    
+    
+    
+  ];
+
+  for (const categoryData of categoriesData) {
+    const category = await Category.create({ 
+      name: categoryData.name, 
+      icon: categoryData.icon 
+    });
+    const subcategories = categoryData.subcategories.map(subcategory => ({
+      name: subcategory.name,
+      icon: subcategory.icon
+    }));
+    
+  }
+  
+
+  return Response.json({ message: 'Seeded successfully with extended data ✅' });
+}
