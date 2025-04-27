@@ -9,13 +9,13 @@ import { cloudinary } from "@/lib/cloudinary";
 export async function POST() {
   try {
     // Check authentication
-    const session = await getServerSession(authOptions);
+   /* const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json(
         { error: "Unauthorized: You must be logged in" },
         { status: 401 }
       );
-    }
+    }*/
 
     // Handle file upload
     const formData = await request.formData();
