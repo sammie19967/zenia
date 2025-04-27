@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "cloudinary": "^2.6.0",
-    "formidable": "^3.5.2",
+    "formidable": "^3.5.4",
     "lucide-react": "^0.487.0",
     "mongoose": "^8.13.2",
     "next": "15.3.0",
