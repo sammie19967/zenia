@@ -1,14 +1,14 @@
 // app/api/ads/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/lib/mongoose";
+import {connectDB} from "@/lib/mongoose";
 import Ad from "@/models/Ad";
 import { getServerSession } from "next-auth/next";
 //import { authOptions } from "@/lib/auth";
 
-export async function POST() {
+export async function POST(request) {
   try {
     // Connect to the database
-    await dbConnect();
+    await connectDB();
     
     // Get the session to authenticate the user
     // const session = await getServerSession(authOptions);
@@ -25,7 +25,7 @@ export async function POST() {
     // Create the ad with user ID from session
     const ad = await Ad.create({
       ...data,
-      userId: session.user.id,
+       userId: session.user.id,
     });
 
     return NextResponse.json(
@@ -43,7 +43,7 @@ export async function POST() {
 
 export async function GET() {
   try {
-    await dbConnect();
+    await connectDB();
     
     // Get query parameters
     const url = new URL(request.url);

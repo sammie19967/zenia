@@ -17,7 +17,7 @@ const AdSchema = new Schema(
     },
     brand: { type: String },
     images: [{ type: String }],
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userId: { type: Schema.Types.ObjectId, ref: "User",  },
     contactInfo: {
       phone: { type: String, required: true },
       email: { type: String, required: true },

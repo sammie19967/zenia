@@ -1,12 +1,12 @@
 // app/api/upload/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
-import { cloudinary } from "@/lib/cloudinary";
+
+//import { authOptions } from "@/lib/auth";
+import  cloudinary  from "@/lib/cloudinary";
 
 
 
-export async function POST() {
+export async function POST(request) {
   try {
     // Check authentication
    /* const session = await getServerSession(authOptions);
@@ -49,7 +49,7 @@ export async function POST() {
     const buffer = Buffer.from(arrayBuffer);
 
     // Generate a unique filename
-    const filename = `${session.user.id}_${Date.now()}_${file.name.replace(/\s/g, "-")}`;
+    const filename = `${Date.now()}_${file.name.replace(/\s/g, "-")}`;
 
     // Upload to Cloudinary
     const uploadResult = await new Promise((resolve, reject) => {
