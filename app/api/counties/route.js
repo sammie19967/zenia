@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import County from '@/models/County'; // assuming you have a County model
-import connectDB from '@/lib/mongoose'; // to connect to MongoDB  
+import {connectDB} from '@/lib/mongoose'; // to connect to MongoDB  
 
 export async function GET() {
   try {

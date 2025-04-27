@@ -1,70 +1,41 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-// Ad Schema
-const adSchema = new mongoose.Schema({
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category", // Reference to the Category model
-    required: true,
-  },
-  subcategory: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Subcategory", // Reference to Subcategory, if needed, or you can use a plain string
-    required: true,
-  },
-  title: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the User model, assuming logged-in user details are stored here
-    required: true,
-  },
-  brand: {
-    type: String,
-    required: true,
-  },
-  customFields: {
-    // This will store custom fields based on subcategory
-    type: Map,
-    of: String, // The keys will be field names and values will be the field values (like storage capacity, color, etc.)
-    required: true,
-  },
-  images: [
-    {
-      type: String, // URL for the images
-      required: true,
+const AdSchema = new Schema(
+  {
+    title: { type: String, required: true, trim: true },
+    description: { type: String, required: true },
+    price: { type: Number, required: true },
+    negotiable: { type: Boolean, default: false },
+    category: { type: String, required: true },
+    subcategory: { type: String, required: true },
+    customFields: { type: Schema.Types.Mixed, default: {} },
+    location: {
+      county: { type: String, required: true },
+      subcounty: { type: String, required: true },
+      town: { type: String, required: true },
     },
-  ],
-  video: {
-    type: String, // URL for the video (if available)
-    default: null,
-  },
-  views: {
-    type: Number,
-    default: 0, // Track the number of views the ad has
-  },
-  location: {
-    county: {
+    brand: { type: String },
+    images: [{ type: String }],
+    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    contactInfo: {
+      phone: { type: String, required: true },
+      email: { type: String, required: true },
+      whatsapp: { type: String },
+    },
+    status: {
       type: String,
-      required: true, // Assuming location is based on counties and subcounties
+      enum: ["active", "pending", "sold", "inactive"],
+      default: "pending",
     },
-    subcounty: {
+    views: { type: Number, default: 0 }, // Tracks the number of views for the ad
+    paymentPlan: {
       type: String,
-      required: true,
+      enum: ["Free Ad", "Class", "Prime"],
+      default: "Free Ad", // Specifies the payment plan for the ad
     },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
-const Ad = mongoose.models.Ad || mongoose.model("Ad", adSchema);
-
-export default Ad;
+module.exports = mongoose.models.Ad || mongoose.model("Ad", AdSchema);

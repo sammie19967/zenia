@@ -2,7 +2,7 @@
 
 import { NextResponse } from 'next/server';
 import Ad from '@/models/Ad';
-import connectDB from '@/lib/mongoose';
+import {connectDB} from '@/lib/mongoose';
 
 export async function POST(req) {
   try {
