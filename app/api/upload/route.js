@@ -1,38 +1,83 @@
-// app/api/upload/route.js
-import { NextResponse } from 'next/server';
-import cloudinary from '@/utils/cloudinary';
-import { IncomingForm } from 'formidable';
-import fs from 'fs';
+// app/api/upload/route.ts
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
+import { cloudinary } from "@/lib/cloudinary";
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
-export async function POST(req) {
-  const form = new IncomingForm();
-  form.multiples = true; // Allow multiple uploads
 
-  const data = await new Promise((resolve, reject) => {
-    form.parse(req, (err, fields, files) => {
-      if (err) reject(err);
-      resolve({ fields, files });
+export async function POST() {
+  try {
+    // Check authentication
+    const session = await getServerSession(authOptions);
+    if (!session || !session.user) {
+      return NextResponse.json(
+        { error: "Unauthorized: You must be logged in" },
+        { status: 401 }
+      );
+    }
+
+    // Handle file upload
+    const formData = await request.formData();
+    const file = formData.get("file") ;
+
+    if (!file) {
+      return NextResponse.json(
+        { error: "No file provided" },
+        { status: 400 }
+      );
+    }
+
+    // Check file type
+    if (!file.type.startsWith("image/")) {
+      return NextResponse.json(
+        { error: "Only image files are allowed" },
+        { status: 400 }
+      );
+    }
+
+    // Check file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      return NextResponse.json(
+        { error: "File size exceeds 5MB limit" },
+        { status: 400 }
+      );
+    }
+
+    // Convert file to buffer for Cloudinary
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    // Generate a unique filename
+    const filename = `${session.user.id}_${Date.now()}_${file.name.replace(/\s/g, "-")}`;
+
+    // Upload to Cloudinary
+    const uploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: "marketplace-ads",
+          public_id: filename,
+          transformation: [{ width: 1200, crop: "limit" }],
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+
+      uploadStream.end(buffer);
     });
-  });
 
-  const allFiles = Array.isArray(data.files.file) ? data.files.file : [data.files.file];
-
-  const uploadPromises = allFiles.map(async (file) => {
-    const upload = await cloudinary.uploader.upload(file.filepath, {
-      folder: 'uploads', // Optional: where to store inside Cloudinary
-      resource_type: 'auto', // auto detects if it's image or video
+    // Return the URL of the uploaded image
+    return NextResponse.json({
+      url: (uploadResult).secure_url,
+      public_id: (uploadResult).public_id,
     });
-
-    return upload.secure_url;
-  });
-
-  const uploadedUrls = await Promise.all(uploadPromises);
-
-  return NextResponse.json({ urls: uploadedUrls });
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    return NextResponse.json(
+      { error: "Failed to upload file", details: error.message },
+      { status: 500 }
+    );
+  }
 }
