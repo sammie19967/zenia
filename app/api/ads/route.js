@@ -1,59 +1,35 @@
-import { connectDB } from '@/lib/mongoose';
+// app/api/ads/route.js
+
+import { NextResponse } from 'next/server';
 import Ad from '@/models/Ad';
-import County from '@/models/County'; // ✅ Import it
+import connectDB from '@/lib/mongoose';
 
-
-// CREATE AD
 export async function POST(req) {
-  await connectDB();
-  const data = await req.json();
-  const ad = await Ad.create(data);
-  return Response.json({ message: 'Ad created successfully', ad });
-}
+  try {
+    await connectDB();
+    const body = await req.json();
 
-// GET ADS WITH FILTER
-export async function GET(req) {
-  await connectDB();
+    const newAd = new Ad({
+      category: body.category,
+      subcategory: body.subcategory,
+      title: body.title,
+      description: body.description,
+      user: body.user,
+      brand: body.brand,
+      customFields: body.customFields,
+      images: body.images,
+      video: body.video || null,
+      location: {
+        county: body.location.county,
+        subcounty: body.location.subcounty,
+      },
+    });
 
-  const { searchParams } = new URL(req.url);
+    const savedAd = await newAd.save();
 
-  const categoryId = searchParams.get("categoryId");
-  const countyId = searchParams.get("countyId");
-  const minPrice = searchParams.get("minPrice");
-  const maxPrice = searchParams.get("maxPrice");
-  const sortBy = searchParams.get("sortBy");
-  const packageType = searchParams.get("package");
-
-  const filter = {};
-
-  if (categoryId) filter.categoryId = categoryId;
-  if (countyId) filter.countyId = countyId;
-  if (minPrice) filter.price = { ...filter.price, $gte: Number(minPrice) };
-  if (maxPrice) filter.price = { ...filter.price, $lte: Number(maxPrice) };
-  if (packageType) filter.package = packageType; // ✅ Apply the package filter
-
-  const sortOption = sortBy === "views" ? { views: -1 } : { createdAt: -1 };
-
-  const ads = await Ad.find(filter)
-  .populate('countyId', 'name')
-  .populate('subcountyId', 'name')
-  .sort(sortOption);
-
-  return Response.json(ads);
-}
-
-// DELETE AD
-export async function DELETE(req) {
-  await connectDB();
-
-  const { searchParams } = new URL(req.url);
-  const adId = searchParams.get('adId');
-
-  if (!adId) {
-    return Response.json({ error: 'Missing adId' }, { status: 400 });
+    return NextResponse.json({ success: true, data: savedAd }, { status: 201 });
+  } catch (error) {
+    console.error('Error creating ad:', error);
+    return NextResponse.json({ success: false, message: 'Failed to create ad' }, { status: 500 });
   }
-
-  await Ad.findByIdAndDelete(adId);
-
-  return Response.json({ message: 'Ad deleted successfully' });
 }
