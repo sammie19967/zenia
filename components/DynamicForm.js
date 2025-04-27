@@ -1,658 +1,501 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { Upload, X, Check, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
-import '@/styles/DynamicForm.css';
+"use client";
 
-export default function DynamicForm() {
-  // Form state
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    price: '',
-    condition: '',
-    negotiable: '',
-    sellerName: '',
-    phoneNumber: '',
-    email: '',
-    categoryId: '',
-    subcategoryId: '',
-    brandId: '',
-    countyId: '',
-    subcountyId: '',
-    package: 'Free Ad',
-  });
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { toast } from "react-hot-toast";
+import { useSession } from "next-auth/react";
+import ImageUpload from "@/components/ImageUpload"; // You'll need to create this component
 
-  // Data options
-  const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
-  const [brands, setBrands] = useState([]);
-  const [counties, setCounties] = useState([]);
-  const [subcounties, setSubcounties] = useState([]);
-  
-  // Image handling
-  const [images, setImages] = useState([]);
-  const [isUploading, setIsUploading] = useState(false);
-  
-  // Form flow
-  const [currentStep, setCurrentStep] = useState(1);
-  const [showModal, setShowModal] = useState(false);
-  const [modalContent, setModalContent] = useState({
-    title: '',
-    message: '',
-    type: 'info',
-  });
+export default function CreateAdForm() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const isLoading = status === "loading";
 
-  // Fetch initial data
+  // States for form data
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
+  const [negotiable, setNegotiable] = useState(false);
+  const [category, setCategory] = useState("");
+  const [subcategory, setSubcategory] = useState("");
+  const [brand, setBrand] = useState("");
+  const [customFields, setCustomFields] = useState<Record<string, string>>({});
+  const [county, setCounty] = useState("");
+  const [subcounty, setSubcounty] = useState("");
+  const [town, setTown] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [images, setImages] = useState<string[]>([]);
+
+  // States for dropdown options
+  const [counties, setCounties] = useState<any[]>([]);
+  const [subcounties, setSubcounties] = useState<any[]>([]);
+  const [towns, setTowns] = useState<string[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [brands, setBrands] = useState<string[]>([]);
+  const [availableCustomFields, setAvailableCustomFields] = useState<any>({});
+
+  // State for submission
+  const [submitting, setSubmitting] = useState(false);
+
+  // Fetch user data when session is available
   useEffect(() => {
-    const fetchData = async () => {
+    if (session?.user?.email) {
+      setEmail(session.user.email);
+    }
+  }, [session]);
+
+  // Fetch counties data
+  useEffect(() => {
+    const fetchCounties = async () => {
       try {
-        const [categoriesRes, countiesRes] = await Promise.all([
-          fetch('/api/categories'),
-          fetch('/api/counties')
-        ]);
-        
-        setCategories(await categoriesRes.json());
-        setCounties(await countiesRes.json());
+        const response = await axios.get("/api/locations/counties");
+        setCounties(response.data);
       } catch (error) {
-        showErrorModal('Initialization Error', 'Failed to load form data. Please refresh the page.');
+        console.error("Error fetching counties:", error);
+        toast.error("Failed to load location data");
       }
     };
-    
-    fetchData();
+
+    fetchCounties();
   }, []);
 
-  // Fetch subcategories and brands when category changes
+  // Fetch categories data
   useEffect(() => {
-    if (formData.categoryId) {
-      const fetchSubData = async () => {
-        try {
-          const [subRes, brandsRes] = await Promise.all([
-            fetch(`/api/subcategories?categoryId=${formData.categoryId}`),
-            fetch(`/api/brands?categoryId=${formData.categoryId}`)
-          ]);
-          
-          setSubcategories(await subRes.json());
-          setBrands(await brandsRes.json());
-        } catch (error) {
-          showErrorModal('Data Error', 'Failed to load category details.');
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get("/api/categories");
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        toast.error("Failed to load category data");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Update subcounties when county changes
+  useEffect(() => {
+    if (county) {
+      const selectedCounty = counties.find(c => c.name === county);
+      if (selectedCounty) {
+        setSubcounties(selectedCounty.subcounties || []);
+        setSubcounty("");
+        setTown("");
+      }
+    } else {
+      setSubcounties([]);
+      setSubcounty("");
+      setTown("");
+    }
+  }, [county, counties]);
+
+  // Update towns when subcounty changes
+  useEffect(() => {
+    if (subcounty && subcounties.length > 0) {
+      const selectedSubcounty = subcounties.find(sc => sc.name === subcounty);
+      if (selectedSubcounty) {
+        setTowns(selectedSubcounty.towns || []);
+        setTown("");
+      }
+    } else {
+      setTowns([]);
+      setTown("");
+    }
+  }, [subcounty, subcounties]);
+
+  // Update subcategories when category changes
+  useEffect(() => {
+    if (category) {
+      const selectedCategory = categories.find(c => c.name === category);
+      if (selectedCategory) {
+        setSubcategories(selectedCategory.subcategories || []);
+        setSubcategory("");
+        setBrand("");
+        setCustomFields({});
+      }
+    } else {
+      setSubcategories([]);
+      setSubcategory("");
+      setBrand("");
+      setCustomFields({});
+    }
+  }, [category, categories]);
+
+  // Update brands and custom fields when subcategory changes
+  useEffect(() => {
+    if (subcategory && subcategories.length > 0) {
+      const selectedSubcategory = subcategories.find(sc => sc.name === subcategory);
+      if (selectedSubcategory) {
+        setBrands(selectedSubcategory.brands || []);
+        setAvailableCustomFields(selectedSubcategory.customFields || {});
+        setBrand("");
+        setCustomFields({});
+      }
+    } else {
+      setBrands([]);
+      setAvailableCustomFields({});
+      setBrand("");
+      setCustomFields({});
+    }
+  }, [subcategory, subcategories]);
+
+  // Handle custom field changes
+  const handleCustomFieldChange = (fieldName: string, value: string) => {
+    setCustomFields(prev => ({
+      ...prev,
+      [fieldName]: value
+    }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!session) {
+      toast.error("You must be logged in to post an ad");
+      return;
+    }
+    
+    if (images.length === 0) {
+      toast.error("Please upload at least one image");
+      return;
+    }
+    
+    setSubmitting(true);
+    
+    try {
+      const adData = {
+        title,
+        description,
+        price: parseFloat(price),
+        negotiable,
+        category,
+        subcategory,
+        brand: brand || undefined,
+        customFields,
+        location: {
+          county,
+          subcounty,
+          town
+        },
+        images,
+        contactInfo: {
+          phone,
+          email,
+          whatsapp: whatsapp || undefined
         }
       };
       
-      fetchSubData();
-    } else {
-      setSubcategories([]);
-      setBrands([]);
-    }
-  }, [formData.categoryId]);
-
-  // Fetch subcounties when county changes
-  useEffect(() => {
-    if (formData.countyId) {
-      fetch(`/api/subcounties?countyId=${formData.countyId}`)
-        .then(res => res.json())
-        .then(setSubcounties)
-        .catch(() => showErrorModal('Data Error', 'Failed to load location details.'));
-    } else {
-      setSubcounties([]);
-    }
-  }, [formData.countyId]);
-
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleFileChange = e => {
-    const files = Array.from(e.target.files);
-    
-    if (files.length > 5) {
-      showErrorModal('Upload Error', 'Maximum 5 images allowed.');
-      e.target.value = null;
-      return;
-    }
-    
-    const oversizedFiles = files.filter(file => file.size > 5 * 1024 * 1024);
-    if (oversizedFiles.length > 0) {
-      showErrorModal('Upload Error', `Some files exceed 5MB limit: ${oversizedFiles.map(f => f.name).join(', ')}`);
-      e.target.value = null;
-      return;
-    }
-    
-    const fileArray = files.map(file => ({
-      file,
-      preview: URL.createObjectURL(file)
-    }));
-    
-    setImages(fileArray);
-  };
-
-  const removeImage = index => {
-    URL.revokeObjectURL(images[index].preview);
-    setImages(prev => prev.filter((_, i) => i !== index));
-  };
-
-  const uploadImages = async () => {
-    if (images.length === 0) return [];
-    
-    setIsUploading(true);
-    
-    try {
-      const formData = new FormData();
-      images.forEach(img => formData.append('images', img.file));
+      const response = await axios.post("/api/ads", adData);
       
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Upload failed');
-      }
-      
-      images.forEach(img => URL.revokeObjectURL(img.preview));
-      
-      return data.urls || [];
-    } catch (error) {
-      console.error('Upload error:', error);
-      throw error;
+      toast.success("Ad created successfully!");
+      router.push(`/ads/${response.data.ad._id}`);
+    } catch (error: any) {
+      console.error("Error creating ad:", error);
+      toast.error(error.response?.data?.error || "Failed to create ad");
     } finally {
-      setIsUploading(false);
+      setSubmitting(false);
     }
   };
 
-  const showErrorModal = (title, message) => {
-    setModalContent({
-      title,
-      message,
-      type: 'error'
-    });
-    setShowModal(true);
-  };
+  if (isLoading) {
+    return <div className="text-center py-10">Loading...</div>;
+  }
 
-  const showSuccessModal = (title, message) => {
-    setModalContent({
-      title,
-      message,
-      type: 'success'
-    });
-    setShowModal(true);
-  };
-
-  const validateStep = (step) => {
-    switch (step) {
-      case 1:
-        if (!formData.title || !formData.description || !formData.price) {
-          showErrorModal('Missing Information', 'Please fill in all basic information fields.');
-          return false;
-        }
-        return true;
-      case 2:
-        if (!formData.condition || !formData.negotiable) {
-          showErrorModal('Missing Information', 'Please specify condition and negotiability.');
-          return false;
-        }
-        return true;
-      case 3:
-        if (!formData.sellerName || !formData.phoneNumber || !formData.email) {
-          showErrorModal('Missing Information', 'Please fill in all seller information fields.');
-          return false;
-        }
-        
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(formData.email)) {
-          showErrorModal('Invalid Email', 'Please enter a valid email address.');
-          return false;
-        }
-        return true;
-      case 4:
-        if (!formData.categoryId || !formData.countyId) {
-          showErrorModal('Missing Information', 'Please select at least a category and county.');
-          return false;
-        }
-        return true;
-      case 5:
-        if (images.length === 0) {
-          showErrorModal('Missing Images', 'Please upload at least one image for your ad.');
-          return false;
-        }
-        return true;
-      default:
-        return true;
-    }
-  };
-
-  const nextStep = () => {
-    if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 5));
-    }
-  };
-
-  const prevStep = () => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
-  };
-
-  const handleSubmit = async e => {
-    e.preventDefault();
-    
-    if (!validateStep(5)) return;
-    
-    try {
-      setIsUploading(true);
-      
-      const imageUrls = await uploadImages();
-      
-      const response = await fetch('/api/ads', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, images: imageUrls })
-      });
-      
-      const data = await response.json();
-      
-      if (!response.ok) {
-        throw new Error(data.error || 'Submission failed');
-      }
-      
-      setFormData({
-        title: '',
-        description: '',
-        price: '',
-        condition: '',
-        negotiable: '',
-        sellerName: '',
-        phoneNumber: '',
-        email: '',
-        categoryId: '',
-        subcategoryId: '',
-        brandId: '',
-        countyId: '',
-        subcountyId: '',
-        package: 'Free Ad',
-      });
-      setImages([]);
-      setCurrentStep(1);
-      
-      showSuccessModal('Success!', 'Your ad has been posted successfully!');
-    } catch (error) {
-      console.error('Submission error:', error);
-      showErrorModal('Submission Failed', error.message || 'Failed to post your ad. Please try again.');
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  if (!session) {
+    return (
+      <div className="text-center py-10">
+        <p className="mb-4">You must be logged in to post an ad</p>
+        <button 
+          className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+          onClick={() => router.push("/auth/signin")}
+        >
+          Sign In
+        </button>
+      </div>
+    );
+  }
 
   return (
-    <div className="form-container">
-      <div className="form-header">
-        <h1>Create New Listing</h1>
-        <p>Fill out the form below to list your item for sale</p>
-      </div>
+    <div className="max-w-4xl mx-auto p-6">
+      <h1 className="text-2xl font-bold mb-6">Create New Ad</h1>
       
-      <div className="form-steps">
-        {[1, 2, 3, 4, 5].map(step => (
-          <div 
-            key={step}
-            className={`step ${currentStep > step ? 'completed' : ''} ${currentStep === step ? 'active' : ''}`}
-          >
-            <div className="step-number">
-              {currentStep > step ? <Check size={16} /> : step}
-            </div>
-            <span className="step-label">
-              {['Basic Info', 'Details', 'Contact', 'Category', 'Images'][step - 1]}
-            </span>
-          </div>
-        ))}
-      </div>
-      
-      <form onSubmit={handleSubmit}>
-        {/* Step 1: Basic Information */}
-        {currentStep === 1 && (
-          <div className="form-section">
-            <div className="section-header">
-              <h2>Basic Information</h2>
-              <p>Tell us about the item you're selling</p>
-            </div>
-            
-            <div className="form-group">
-              <label className="required">Title</label>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Basic Ad Information */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Ad Title *</label>
               <input
                 type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="e.g. Samsung Galaxy S21 Ultra"
-                maxLength={100}
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+                placeholder="Enter a descriptive title"
               />
             </div>
             
-            <div className="form-group">
-              <label className="required">Description</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Description *</label>
               <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Provide detailed description of your item"
-                maxLength={1000}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+                rows={4}
+                placeholder="Provide details about your item"
               />
             </div>
             
-            <div className="form-group">
-              <label className="required">Price (KSh)</label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Enter price"
-                min="0"
-                step="100"
-              />
-            </div>
-          </div>
-        )}
-        
-        {/* Step 2: Item Details */}
-        {currentStep === 2 && (
-          <div className="form-section">
-            <div className="section-header">
-              <h2>Item Details</h2>
-              <p>Specify the condition and negotiability</p>
-            </div>
-            
-            <div className="form-group">
-              <label className="required">Condition</label>
-              <select
-                name="condition"
-                value={formData.condition}
-                onChange={handleChange}
-                className="form-control"
-              >
-                <option value="">Select condition</option>
-                <option value="New">New</option>
-                <option value="Used">Used</option>
-                <option value="Refurbished">Refurbished</option>
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label className="required">Negotiable</label>
-              <select
-                name="negotiable"
-                value={formData.negotiable}
-                onChange={handleChange}
-                className="form-control"
-              >
-                <option value="">Select option</option>
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
-                <option value="Slightly">Slightly negotiable</option>
-              </select>
-            </div>
-          </div>
-        )}
-        
-        {/* Step 3: Contact Information */}
-        {currentStep === 3 && (
-          <div className="form-section">
-            <div className="section-header">
-              <h2>Contact Information</h2>
-              <p>How buyers can reach you</p>
-            </div>
-            
-            <div className="form-group">
-              <label className="required">Your Name</label>
-              <input
-                type="text"
-                name="sellerName"
-                value={formData.sellerName}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Your full name"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label className="required">Phone Number</label>
-              <input
-                type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Phone number"
-              />
-            </div>
-            
-            <div className="form-group">
-              <label className="required">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="form-control"
-                placeholder="Your email address"
-              />
-            </div>
-          </div>
-        )}
-        
-        {/* Step 4: Category & Location */}
-        {currentStep === 4 && (
-          <div className="form-section">
-            <div className="section-header">
-              <h2>Category & Location</h2>
-              <p>Help buyers find your item</p>
-            </div>
-            
-            <div className="form-group">
-              <label className="required">Category</label>
-              <select
-                name="categoryId"
-                value={formData.categoryId}
-                onChange={handleChange}
-                className="form-control"
-              >
-                <option value="">Select category</option>
-                {categories.map(cat => (
-                  <option key={cat._id} value={cat._id}>{cat.name}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Subcategory</label>
-              <select
-                name="subcategoryId"
-                value={formData.subcategoryId}
-                onChange={handleChange}
-                className="form-control"
-                disabled={!subcategories.length}
-              >
-                <option value="">{subcategories.length ? "Select subcategory" : "No subcategories available"}</option>
-                {subcategories.map(sub => (
-                  <option key={sub._id} value={sub._id}>{sub.name}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Brand</label>
-              <select
-                name="brandId"
-                value={formData.brandId}
-                onChange={handleChange}
-                className="form-control"
-                disabled={!brands.length}
-              >
-                <option value="">{brands.length ? "Select brand" : "No brands available"}</option>
-                {brands.map(brand => (
-                  <option key={brand._id} value={brand._id}>{brand.name}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label className="required">County</label>
-              <select
-                name="countyId"
-                value={formData.countyId}
-                onChange={handleChange}
-                className="form-control"
-              >
-                <option value="">Select county</option>
-                {counties.map(county => (
-                  <option key={county._id} value={county._id}>{county.name}</option>
-                ))}
-              </select>
-            </div>
-            
-            <div className="form-group">
-              <label>Subcounty</label>
-              <select
-                name="subcountyId"
-                value={formData.subcountyId}
-                onChange={handleChange}
-                className="form-control"
-                disabled={!subcounties.length}
-              >
-                <option value="">{subcounties.length ? "Select subcounty" : "No subcounties available"}</option>
-                {subcounties.map(sub => (
-                  <option key={sub._id} value={sub._id}>{sub.name}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
-        
-        {/* Step 5: Images & Package */}
-        {currentStep === 5 && (
-          <div className="form-section">
-            <div className="section-header">
-              <h2>Images & Package</h2>
-              <p>Add photos and select your ad package</p>
-            </div>
-            
-            <div className="form-group">
-              <label className="required">Images</label>
-              <div className="file-upload">
-                <label className="file-upload-label">
-                  <Upload className="file-upload-icon" />
-                  <span className="file-upload-text">Click to upload or drag and drop</span>
-                  <span className="file-upload-hint">JPG, PNG (Max 5MB each)</span>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handleFileChange}
-                    style={{ display: 'none' }}
-                  />
-                </label>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Price (KSH) *</label>
+                <input
+                  type="number"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  required
+                  min="0"
+                  className="w-full p-2 border rounded"
+                  placeholder="Enter price"
+                />
               </div>
               
-              {images.length > 0 && (
-                <div className="image-previews">
-                  {images.map((img, index) => (
-                    <div key={index} className="image-preview">
-                      <img src={img.preview} alt={`Preview ${index + 1}`} />
-                      <button
-                        type="button"
-                        className="remove-image"
-                        onClick={() => removeImage(index)}
-                      >
-                        <X size={14} />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="negotiable"
+                  checked={negotiable}
+                  onChange={(e) => setNegotiable(e.target.checked)}
+                  className="mr-2"
+                />
+                <label htmlFor="negotiable" className="text-sm">Price is negotiable</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Category Information */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Category Information</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Category *</label>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select Category</option>
+                {categories.map((cat) => (
+                  <option key={cat._id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
             </div>
             
-            <div className="form-group">
-              <label>Package</label>
+            <div>
+              <label className="block text-sm font-medium mb-1">Subcategory *</label>
               <select
-                name="package"
-                value={formData.package}
-                onChange={handleChange}
-                className="form-control"
+                value={subcategory}
+                onChange={(e) => setSubcategory(e.target.value)}
+                required
+                disabled={!category}
+                className="w-full p-2 border rounded"
               >
-                <option value="Free Ad">Free Ad</option>
-                <option value="Class">Class - 10 Ksh / Day</option>
-                <option value="Prime">Prime - 40 Ksh / Day</option>
+                <option value="">Select Subcategory</option>
+                {subcategories.map((subcat) => (
+                  <option key={subcat._id} value={subcat.name}>
+                    {subcat.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {brands.length > 0 && (
+              <div>
+                <label className="block text-sm font-medium mb-1">Brand</label>
+                <select
+                  value={brand}
+                  onChange={(e) => setBrand(e.target.value)}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">Select Brand</option>
+                  {brands.map((brandName) => (
+                    <option key={brandName} value={brandName}>
+                      {brandName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+            
+            {/* Render Custom Fields based on selected subcategory */}
+            {Object.entries(availableCustomFields).length > 0 && (
+              <div className="space-y-4 pt-4 border-t">
+                <h3 className="font-medium">Additional Details</h3>
+                
+                {Object.entries(availableCustomFields).map(([fieldName, options]) => (
+                  <div key={fieldName}>
+                    <label className="block text-sm font-medium mb-1">
+                      {fieldName.charAt(0).toUpperCase() + fieldName.slice(1)}
+                    </label>
+                    <select
+                      value={customFields[fieldName] || ""}
+                      onChange={(e) => handleCustomFieldChange(fieldName, e.target.value)}
+                      className="w-full p-2 border rounded"
+                    >
+                      <option value="">Select {fieldName}</option>
+                      {(options as string[]).map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+        
+        {/* Location Information */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Location</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">County *</label>
+              <select
+                value={county}
+                onChange={(e) => setCounty(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select County</option>
+                {counties.map((countyItem) => (
+                  <option key={countyItem._id} value={countyItem.name}>
+                    {countyItem.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Subcounty *</label>
+              <select
+                value={subcounty}
+                onChange={(e) => setSubcounty(e.target.value)}
+                required
+                disabled={!county}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select Subcounty</option>
+                {subcounties.map((subcountyItem) => (
+                  <option key={subcountyItem.name} value={subcountyItem.name}>
+                    {subcountyItem.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Town *</label>
+              <select
+                value={town}
+                onChange={(e) => setTown(e.target.value)}
+                required
+                disabled={!subcounty}
+                className="w-full p-2 border rounded"
+              >
+                <option value="">Select Town</option>
+                {towns.map((townName) => (
+                  <option key={townName} value={townName}>
+                    {townName}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
-        )}
-        
-        {/* Form Navigation */}
-        <div className="form-actions">
-          {currentStep > 1 && (
-            <button
-              type="button"
-              className="btn btn-outline"
-              onClick={prevStep}
-              disabled={isUploading}
-            >
-              <ChevronLeft size={16} /> Back
-            </button>
-          )}
-          
-          {currentStep < 5 ? (
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={nextStep}
-              disabled={isUploading}
-            >
-              Next <ChevronRight size={16} />
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="btn btn-primary"
-              disabled={isUploading}
-            >
-              {isUploading ? (
-                <>
-                  <Loader2 className="animate-spin" size={16} /> Processing...
-                </>
-              ) : (
-                'Submit Ad'
-              )}
-            </button>
-          )}
         </div>
-      </form>
-      
-      {/* Modal */}
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-container">
-            <div className="modal-header">
-              <h3 className="modal-title">{modalContent.title}</h3>
-              <button className="modal-close" onClick={() => setShowModal(false)}>
-                <X size={20} />
-              </button>
+        
+        {/* Images */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Images</h2>
+          <p className="text-sm text-gray-500 mb-4">Upload at least one image (maximum 8)</p>
+          
+          <ImageUpload 
+            images={images} 
+            setImages={setImages} 
+            maxImages={8} 
+          />
+        </div>
+        
+        {/* Contact Information */}
+        <div className="bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
+          
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-1">Phone Number *</label>
+              <input
+                type="tel"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+                placeholder="e.g. 0700123456"
+              />
             </div>
-            <div className="modal-body">
-              <p>{modalContent.message}</p>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">Email *</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full p-2 border rounded"
+                placeholder="Your email address"
+                readOnly={!!session?.user?.email}
+              />
             </div>
-            <div className="modal-footer">
-              <button
-                className={`btn ${modalContent.type === 'error' ? 'btn-secondary' : 'btn-primary'}`}
-                onClick={() => setShowModal(false)}
-              >
-                OK
-              </button>
+            
+            <div>
+              <label className="block text-sm font-medium mb-1">WhatsApp Number (optional)</label>
+              <input
+                type="tel"
+                value={whatsapp}
+                onChange={(e) => setWhatsapp(e.target.value)}
+                className="w-full p-2 border rounded"
+                placeholder="e.g. 0700123456"
+              />
             </div>
           </div>
         </div>
-      )}
+        
+        {/* Submit Button */}
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={submitting}
+            className="bg-blue-600 text-white px-6 py-3 rounded-md font-medium hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed"
+          >
+            {submitting ? "Submitting..." : "Post Ad"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

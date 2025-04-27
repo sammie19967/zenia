@@ -1,9 +1,9 @@
 // app/api/ads/route.ts
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "@/lib/dbConnect";
+import dbConnect from "@/lib/mongoose";
 import Ad from "@/models/Ad";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/lib/auth";
+//import { authOptions } from "@/lib/auth";
 
 export async function POST() {
   try {
@@ -11,13 +11,13 @@ export async function POST() {
     await dbConnect();
     
     // Get the session to authenticate the user
-    const session = await getServerSession(authOptions);
-    if (!session || !session.user) {
-      return NextResponse.json(
-        { error: "Unauthorized: You must be logged in" },
-        { status: 401 }
-      );
-    }
+    // const session = await getServerSession(authOptions);
+    //if (!session || !session.user) {
+    //  return NextResponse.json(
+    //    { error: "Unauthorized: You must be logged in" },
+    //    { status: 401 }
+    //  );
+    //} */
 
     // Parse the request body
     const data = await request.json();
