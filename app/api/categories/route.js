@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import Category from '@/models/Category'; // assuming you have a Category model
-import connectDB from '@/utils/db'; // a file to connect to MongoDB
+import connectDB from '@/lib/mongoose';//to connect to MongoDB
 
 export async function GET() {
   try {
