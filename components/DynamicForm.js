@@ -295,6 +295,29 @@ export default function CreateAdForm() {
             </div>
           )}
         </div>
+         {/* Custom Fields */}
+         {availableCustomFields && Object.keys(availableCustomFields).length > 0 && (
+          <section style={{ marginBottom: "20px" }}>
+            <h2 style={{ fontSize: "20px", fontWeight: "bold" }}>Extra Details</h2>
+            {Object.keys(availableCustomFields).map((field) => (
+              <input
+                key={field}
+                type="text"
+                placeholder={field}
+                value={customFields[field] || ""}
+                onChange={(e) => handleCustomFieldChange(field, e.target.value)}
+                style={{
+                  width: "30%",
+                  padding: "10px",
+                  border: "1px solid #ccc",
+                  borderRadius: "5px",
+                  marginBottom: "10px",
+                  gap: "10px",
+                }}
+              />
+            ))}
+          </section>
+        )}
 
         {/* Location Information */}
         <div style={{ marginBottom: "20px" }}>
