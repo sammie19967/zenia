@@ -147,6 +147,12 @@ export default function CreateAdForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const user = getCurrentUser(); // Get the current Firebase user
+  if (!user) {
+    alert("You must be logged in to create an ad.");
+    return;
+  }
+
     if (images.length === 0) {
       alert("Please upload at least one image");
       return;
@@ -170,6 +176,7 @@ export default function CreateAdForm() {
           town,
         },
         images,
+        userId: userAgent.uid,
         contactInfo: {
           phone,
           email,

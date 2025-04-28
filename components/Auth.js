@@ -1,5 +1,5 @@
-// Example usage in your component/page
-
+// components/Auth.js
+"use client";
 import { useState, useEffect } from 'react';
 import {
   signUpWithEmail,
@@ -13,12 +13,16 @@ import {
   authStateListener
 } from '../lib/firebase';
 
-export default function AuthExample() {
+export default function Auth() {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const [phoneConfirmation, setPhoneConfirmation] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   
   useEffect(() => {
+    // Mark as client-side after mounting
+    setIsClient(true);
+    
     // Listen for auth state changes
     const unsubscribe = authStateListener((currentUser) => {
       setUser(currentUser);
@@ -27,6 +31,11 @@ export default function AuthExample() {
     // Cleanup subscription
     return () => unsubscribe();
   }, []);
+  
+  // Don't render authentication UI until client-side code is running
+  if (!isClient) {
+    return <div>Loading authentication...</div>;
+  }
   
   // 1. Email/Password Sign Up
   const handleEmailSignUp = async (e) => {
