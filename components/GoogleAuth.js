@@ -1,3 +1,5 @@
+"use client";
+
 import { signInWithGoogle } from "@/lib/firebase";
 
 export default function GoogleAuth() {
