@@ -57,7 +57,7 @@ export default function Navbar() {
         <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle dark mode">
           {darkMode ? <Sun size={18} /> : <Moon size={18} />}
         </button>
-        <Link href="/login" className="nav-button">Sign In</Link>
+        <Link href="/auth" className="nav-button">Sign In</Link>
       </div>
     </nav>
   );

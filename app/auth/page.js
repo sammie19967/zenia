@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FiMail, FiLock, FiUser, FiPhone, FiArrowRight } from "react-icons/fi";
+import { useRouter } from "next/navigation";
+import { FiMail, FiLock, FiUser, FiArrowRight } from "react-icons/fi";
 import { signInWithEmail, signUpWithEmail, sendPasswordResetEmail } from "@/lib/firebase";
 import GoogleAuth from "@/components/GoogleAuth";
 import PhoneSignIn from "@/components/PhoneSignIn";
+import toast from "react-hot-toast";
 import "@/styles/auth.css";
 
 export default function AuthPage() {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
@@ -19,24 +23,38 @@ export default function AuthPage() {
 
   const handleAuth = async (e) => {
     e.preventDefault();
+    setError("");
+
+    const toastId = toast.loading(isLogin ? "Signing in..." : "Creating account...");
+
     try {
       if (isLogin) {
         await signInWithEmail(email, password);
+        toast.success("Logged in successfully!", { id: toastId });
+        router.push("/dashboard");
       } else {
         await signUpWithEmail(email, password, name);
+        toast.success("Account created! Please log in.", { id: toastId });
+        setIsLogin(true);
+        setEmail("");
+        setPassword("");
+        setName("");
       }
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Something went wrong", { id: toastId });
     }
   };
 
   const handleReset = async () => {
+    const toastId = toast.loading("Sending reset link...");
     try {
       await sendPasswordResetEmail(resetEmail);
-      alert("Password reset link sent to your email!");
+      toast.success("Password reset link sent!", { id: toastId });
       setShowReset(false);
     } catch (err) {
       setError(err.message);
+      toast.error(err.message || "Failed to send reset link", { id: toastId });
     }
   };
 
@@ -50,7 +68,11 @@ export default function AuthPage() {
         {error && (
           <div className="error-message">
             <svg className="error-icon" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
             </svg>
             <p>{error}</p>
           </div>
@@ -78,10 +100,7 @@ export default function AuthPage() {
               </div>
             </div>
 
-            <button
-              onClick={handleReset}
-              className="btn btn-primary"
-            >
+            <button onClick={handleReset} className="btn btn-primary">
               Send Reset Link
             </button>
 
@@ -162,10 +181,7 @@ export default function AuthPage() {
               {isLogin && (
                 <div className="remember-forgot">
                   <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      className="checkbox-input"
-                    />
+                    <input type="checkbox" className="checkbox-input" />
                     Remember me
                   </label>
 
@@ -179,10 +195,7 @@ export default function AuthPage() {
                 </div>
               )}
 
-              <button
-                type="submit"
-                className="btn btn-primary"
-              >
+              <button type="submit" className="btn btn-primary">
                 {isLogin ? "Sign in" : "Sign up"}
               </button>
             </form>
