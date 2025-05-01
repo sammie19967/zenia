@@ -1,21 +1,25 @@
 "use client";
 
 import { signInWithGoogle } from "@/lib/firebase";
+import { FcGoogle } from "react-icons/fc";
+import "@/styles/auth.css";
 
 export default function GoogleAuth() {
   const handleGoogleLogin = async () => {
     try {
-      const user = await signInWithGoogle();
-      console.log("Google signed in user:", user);
+      await signInWithGoogle();
     } catch (error) {
-      alert(error.message);
+      console.error("Google sign in error:", error);
     }
   };
 
   return (
-    <div>
-      <h2>Sign in with Google</h2>
-      <button onClick={handleGoogleLogin}>Sign in with Google</button>
-    </div>
+    <button
+      onClick={handleGoogleLogin}
+      className="btn btn-secondary"
+    >
+      <FcGoogle style={{ marginRight: "0.5rem", height: "1.25rem", width: "1.25rem" }} />
+      Google
+    </button>
   );
 }
