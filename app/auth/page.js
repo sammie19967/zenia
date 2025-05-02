@@ -3,11 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
+
 import { FiMail, FiLock, FiUser, FiArrowRight } from "react-icons/fi";
 import { signInWithEmail, signUpWithEmail, sendPasswordResetEmail } from "@/lib/firebase";
 import GoogleAuth from "@/components/GoogleAuth";
 import PhoneSignIn from "@/components/PhoneSignIn";
-import toast from "react-hot-toast";
 import "@/styles/auth.css";
 
 export default function AuthPage() {
@@ -24,16 +26,28 @@ export default function AuthPage() {
   const handleAuth = async (e) => {
     e.preventDefault();
     setError("");
-
     const toastId = toast.loading(isLogin ? "Signing in..." : "Creating account...");
 
     try {
       if (isLogin) {
-        await signInWithEmail(email, password);
-        toast.success("Logged in successfully!", { id: toastId });
-        router.push("/dashboard");
+        // Login
+        const userCredential = await signInWithEmail(email, password);
+        const idToken = await userCredential.user.getIdToken();
+
+        const res = await signIn("credentials", {
+          redirect: false,
+          idToken,
+        });
+
+        if (res?.ok) {
+          toast.success("Logged in successfully!", { id: toastId });
+          router.push("/dashboard");
+        } else {
+          throw new Error(res?.error || "Login failed");
+        }
       } else {
-        await signUpWithEmail(email, password, name);
+        // Signup
+        const userCredential = await signUpWithEmail(email, password, name);
         toast.success("Account created! Please log in.", { id: toastId });
         setIsLogin(true);
         setEmail("");
@@ -41,6 +55,7 @@ export default function AuthPage() {
         setName("");
       }
     } catch (err) {
+      console.error(err);
       setError(err.message);
       toast.error(err.message || "Something went wrong", { id: toastId });
     }

@@ -19,11 +19,10 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-       <Toaster position="top-right" />
+    <html lang="en"> 
       <body 
-      
       className={`${geistSans.variable} ${geistMono.variable}`}>
+        <Toaster position="top-right" />
         {children}
       </body>
     </html>
