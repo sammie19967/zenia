@@ -23,7 +23,7 @@ try {
   console.error("Firebase Admin Init Error:", err);
 }
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     CredentialsProvider({
       name: "Firebase",
@@ -31,17 +31,17 @@ const handler = NextAuth({
         try {
           const { idToken } = credentials;
 
-          // Verify the ID token using Firebase Admin SDK
+// Verify the ID token using Firebase Admin SDK
           const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
           const { uid, email, phone_number, name, picture, firebase } = decoded;
 
-          // Connect to the database
+// Connect to the database
           await connectDB();
 
-          // Check if the user exists in the database
+// Check if the user exists in the database
           let user = await User.findOne({ uid });
           if (!user) {
-            // Create a new user if not found
+// Create a new user if not found
             user = await User.create({
               uid,
               email,
@@ -52,7 +52,7 @@ const handler = NextAuth({
             });
           }
 
-          // Return the user object
+// Return the user object
           return { id: user._id, email: user.email, name: user.name, image: user.image };
         } catch (error) {
           console.error("Error in authorize function:", error);
@@ -74,6 +74,7 @@ const handler = NextAuth({
       return session;
     },
   },
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
