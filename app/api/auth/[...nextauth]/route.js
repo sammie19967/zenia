@@ -28,26 +28,36 @@ const handler = NextAuth({
     CredentialsProvider({
       name: "Firebase",
       async authorize(credentials) {
-        const { idToken } = credentials;
+        try {
+          const { idToken } = credentials;
 
-        const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
-        const { uid, email, phone_number, name, picture, firebase } = decoded;
+          // Verify the ID token using Firebase Admin SDK
+          const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
+          const { uid, email, phone_number, name, picture, firebase } = decoded;
 
-        await connectToDB();
+          // Connect to the database
+          await connectDB();
 
-        let user = await User.findOne({ uid });
-        if (!user) {
-          user = await User.create({
-            uid,
-            email,
-            phoneNumber: phone_number,
-            provider: firebase.sign_in_provider,
-            name,
-            image: picture,
-          });
+          // Check if the user exists in the database
+          let user = await User.findOne({ uid });
+          if (!user) {
+            // Create a new user if not found
+            user = await User.create({
+              uid,
+              email,
+              phoneNumber: phone_number,
+              provider: firebase.sign_in_provider,
+              name,
+              image: picture,
+            });
+          }
+
+          // Return the user object
+          return { id: user._id, email: user.email, name: user.name, image: user.image };
+        } catch (error) {
+          console.error("Error in authorize function:", error);
+          throw new Error("Authentication failed. Please try again.");
         }
-
-        return { id: user._id, email: user.email, name: user.name, image: user.image };
       },
     }),
   ],
