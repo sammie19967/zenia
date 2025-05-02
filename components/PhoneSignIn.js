@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { setupRecaptcha, signInWithPhone, confirmPhoneCode } from "@/lib/firebase";
 import { FiPhone } from "react-icons/fi";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/navigation"; // ✅ Import router
 import "@/styles/auth.css";
 
 export default function PhoneSignIn() {
@@ -10,6 +12,7 @@ export default function PhoneSignIn() {
   const [verificationCode, setVerificationCode] = useState("");
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter(); // ✅ Init router
 
   useEffect(() => {
     setupRecaptcha("recaptcha-container");
@@ -20,8 +23,10 @@ export default function PhoneSignIn() {
     try {
       await signInWithPhone(phoneNumber);
       setIsCodeSent(true);
+      toast.success("Verification code sent to your phone.");
     } catch (error) {
       console.error("Phone auth error:", error);
+      toast.error("Failed to send verification code.");
     } finally {
       setIsLoading(false);
     }
@@ -31,8 +36,11 @@ export default function PhoneSignIn() {
     setIsLoading(true);
     try {
       await confirmPhoneCode(verificationCode);
+      toast.success("Phone number verified!");
+      router.push("/"); // ✅ Redirect on success
     } catch (error) {
       console.error("Code confirmation error:", error);
+      toast.error("Invalid verification code.");
     } finally {
       setIsLoading(false);
     }
