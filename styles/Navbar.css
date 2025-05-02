@@ -115,6 +115,35 @@
     background-color: var(--color-background-alt);
     color: var(--color-primary);
   }
+  .profile-container {
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .profile-avatar {
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+  }
+  
+  .profile-avatar:hover {
+    transform: scale(1.05);
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background: var(--background-color, white);
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+    border-radius: 8px;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
   
   /* Responsive adjustments */
   @media (max-width: 1024px) {
