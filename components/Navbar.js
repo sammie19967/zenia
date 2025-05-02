@@ -62,7 +62,7 @@ export default function Navbar() {
         ) : (
           <div className="profile-container">
             <Image
-              src={session.user.image || "/default-avatar.png"}
+              src={session.user.image || "/default-avatar.jpg"}
               alt="Profile"
               width={32}
               height={32}

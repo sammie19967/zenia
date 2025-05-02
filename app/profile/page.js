@@ -52,8 +52,8 @@ export default function ProfileDashboard() {
     }
   };
 
-  if (status === "loading" || loading) return <p>Loading...</p>;
-  if (!session) return <p>Please <Link href="/auth">sign in</Link>.</p>;
+  if (status === "loading" || loading) return <div className="loading">Loading...</div>;
+  if (!session) return <div className="empty-state">Please <Link href="/auth">sign in</Link>.</div>;
 
   return (
     <div className="dashboard">
@@ -62,8 +62,8 @@ export default function ProfileDashboard() {
         <Image
           src={userData?.image || "/default-avatar.png"}
           alt="Profile"
-          width={80}
-          height={80}
+          width={120}
+          height={120}
           className="profile-image"
         />
         <input
@@ -74,7 +74,7 @@ export default function ProfileDashboard() {
           onChange={handleInputChange}
         />
         <input
-          type="text"
+          type="tel"
           name="phoneNumber"
           placeholder="Phone Number"
           value={userData?.phoneNumber || ""}
@@ -97,19 +97,27 @@ export default function ProfileDashboard() {
         <button onClick={handleUpdate}>Update Profile</button>
       </div>
 
-      <hr />
-      <h2>Your Ads</h2>
       <div className="ads-section">
+        <h2>Your Ads</h2>
         {ads.length === 0 ? (
-          <p>You haven't posted any ads yet.</p>
+          <div className="empty-state">
+            <p>You haven't posted any ads yet.</p>
+            <Link href="/ads/create" className="create-ad-link">Create Your First Ad</Link>
+          </div>
         ) : (
           ads.map((ad) => (
             <div key={ad._id} className="ad-card">
-              <Image src={ad.images[0]} alt={ad.title} width={100} height={100} />
-              <div>
+              <Image 
+                src={ad.images[0]} 
+                alt={ad.title} 
+                width={150} 
+                height={150} 
+                objectFit="cover"
+              />
+              <div className="ad-content">
                 <h4>{ad.title}</h4>
-                <p>{ad.description.slice(0, 60)}...</p>
-                <Link href={`/ads/${ad._id}`}>View</Link>
+                <p>{ad.description.slice(0, 100)}...</p>
+                <Link href={`/ads/${ad._id}`}>View Details</Link>
               </div>
             </div>
           ))
