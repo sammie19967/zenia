@@ -1,5 +1,4 @@
-import AdList from '@/components/AdList'
-import DynamicForm from '@/components/DynamicForm'
+// This is the main entry point for the application
 import Hero from '@/components/Hero'
 import Navbar from '@/components/Navbar'
 import SponsoredAds from '@/components/SponsoredAds'
@@ -15,5 +14,4 @@ const page = () => {
     </div>
   )
 }
-
 export default page
