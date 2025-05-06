@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import ImageUpload from "@/components/ImageUpload";
+import { useSession } from "next-auth/react";
 
 export default function CreateAdForm() {
   const router = useRouter();
@@ -36,6 +37,47 @@ export default function CreateAdForm() {
 
   // State for submission
   const [submitting, setSubmitting] = useState(false);
+  const [user, setUser] = useState(null);
+
+  // Get NextAuth session
+  const { data: session, status } = useSession();
+  
+  // Check user authentication and prefill data
+  useEffect(() => {
+    if (status === "authenticated" && session?.user) {
+      setUser(session.user);
+      
+      // Fetch extended user data from your database to get phone number
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get(`/api/user/${session.user.id}`);
+          const userData = response.data;
+          
+          // Pre-fill email from session
+          if (session.user.email) {
+            setEmail(session.user.email);
+          }
+          
+          // Pre-fill phone if available from extended user data
+          if (userData?.phoneNumber) {
+            setPhone(userData.phoneNumber);
+            // If WhatsApp isn't set and user has phone, pre-fill it too
+            if (!whatsapp) {
+              setWhatsapp(userData.phoneNumber);
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          // Still set email from session even if extended data fetch fails
+          if (session.user.email) {
+            setEmail(session.user.email);
+          }
+        }
+      };
+      
+      fetchUserData();
+    }
+  }, [status, session, whatsapp]);
 
   // Fetch counties data
   useEffect(() => {
@@ -57,14 +99,12 @@ export default function CreateAdForm() {
     const fetchCategories = async () => {
       try {
         const response = await axios.get("/api/categories");
-        console.log("Categories response:", response.data); 
-        setCategories(response.data.data);  // <-- NOTICE .data here
+        setCategories(response.data.data);
       } catch (error) {
         console.error("Error fetching categories:", error);
         alert("Failed to load category data");
       }
     };
-    
 
     fetchCategories();
   }, []);
@@ -147,11 +187,10 @@ export default function CreateAdForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const user = getCurrentUser(); // Get the current Firebase user
-  if (!user) {
-    alert("You must be logged in to create an ad.");
-    return;
-  }
+    if (status !== "authenticated" || !session?.user) {
+      alert("You must be logged in to create an ad.");
+      return;
+    }
 
     if (images.length === 0) {
       alert("Please upload at least one image");
@@ -176,7 +215,7 @@ export default function CreateAdForm() {
           town,
         },
         images,
-        userId: userAgent.uid,
+        userId: session.user.id, // Using the session user ID
         contactInfo: {
           phone,
           email,
@@ -196,15 +235,122 @@ export default function CreateAdForm() {
     }
   };
 
+  // Determine the appropriate input type for each custom field
+  const renderCustomFieldInput = (fieldName, options) => {
+    // If options is an array, render a select dropdown
+    if (Array.isArray(options)) {
+      return (
+        <div key={fieldName} style={{ marginBottom: "15px" }}>
+          <label>{fieldName}</label>
+          <select
+            value={customFields[fieldName] || ""}
+            onChange={(e) => handleCustomFieldChange(fieldName, e.target.value)}
+            style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+          >
+            <option value="">Select {fieldName}</option>
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        </div>
+      );
+    }
+    
+    // If options is an object with type property
+    if (options && typeof options === 'object' && options.type) {
+      switch (options.type) {
+        case 'number':
+          return (
+            <div key={fieldName} style={{ marginBottom: "15px" }}>
+              <label>{fieldName}</label>
+              <input
+                type="number"
+                value={customFields[fieldName] || ""}
+                min={options.min || 0}
+                max={options.max || undefined}
+                step={options.step || 1}
+                onChange={(e) => handleCustomFieldChange(fieldName, e.target.value)}
+                style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+                placeholder={`Enter ${fieldName}`}
+              />
+            </div>
+          );
+          
+        case 'boolean':
+          return (
+            <div key={fieldName} style={{ marginBottom: "15px", display: "flex", alignItems: "center" }}>
+              <input
+                type="checkbox"
+                id={`custom-${fieldName}`}
+                checked={!!customFields[fieldName]}
+                onChange={(e) => handleCustomFieldChange(fieldName, e.target.checked)}
+              />
+              <label htmlFor={`custom-${fieldName}`} style={{ marginLeft: "5px" }}>
+                {fieldName}
+              </label>
+            </div>
+          );
+          
+        case 'date':
+          return (
+            <div key={fieldName} style={{ marginBottom: "15px" }}>
+              <label>{fieldName}</label>
+              <input
+                type="date"
+                value={customFields[fieldName] || ""}
+                onChange={(e) => handleCustomFieldChange(fieldName, e.target.value)}
+                style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+              />
+            </div>
+          );
+      }
+    }
+    
+    // Default: text input
+    return (
+      <div key={fieldName} style={{ marginBottom: "15px" }}>
+        <label>{fieldName}</label>
+        <input
+          type="text"
+          value={customFields[fieldName] || ""}
+          onChange={(e) => handleCustomFieldChange(fieldName, e.target.value)}
+          style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+          placeholder={`Enter ${fieldName}`}
+        />
+      </div>
+    );
+  };
+
   return (
     <div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
       <h1 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "20px" }}>Create New Ad</h1>
+      
+      {!user && (
+        <div style={{ 
+          backgroundColor: "#fff3cd", 
+          color: "#856404", 
+          padding: "12px", 
+          borderRadius: "5px", 
+          marginBottom: "20px",
+          border: "1px solid #ffeeba"
+        }}>
+          <p>You need to be logged in to post an ad. Please log in or sign up first.</p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit}>
         {/* Basic Ad Information */}
-        <div style={{ marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>Basic Information</h2>
-          <div style={{ marginBottom: "10px" }}>
+        <div style={{ 
+          marginBottom: "20px", 
+          backgroundColor: "#fff", 
+          padding: "20px", 
+          borderRadius: "8px", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)" 
+        }}>
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}>Basic Information</h2>
+          <div style={{ marginBottom: "15px" }}>
             <label>Ad Title *</label>
             <input
               type="text"
@@ -212,19 +358,22 @@ export default function CreateAdForm() {
               onChange={(e) => setTitle(e.target.value)}
               required
               style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+              placeholder="Enter a catchy title for your ad"
             />
           </div>
-          <div style={{ marginBottom: "10px" }}>
+          <div style={{ marginBottom: "15px" }}>
             <label>Description *</label>
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               required
+              rows={5}
               style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+              placeholder="Provide detailed description of what you're selling"
             />
           </div>
-          <div style={{ display: "flex", gap: "10px" }}>
-            <div>
+          <div style={{ display: "flex", gap: "15px", flexWrap: "wrap" }}>
+            <div style={{ flex: "1", minWidth: "150px" }}>
               <label>Price (KSH) *</label>
               <input
                 type="number"
@@ -232,9 +381,10 @@ export default function CreateAdForm() {
                 onChange={(e) => setPrice(e.target.value)}
                 required
                 style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+                placeholder="Enter price"
               />
             </div>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div style={{ display: "flex", alignItems: "center", marginTop: "25px" }}>
               <input
                 type="checkbox"
                 id="negotiable"
@@ -249,9 +399,15 @@ export default function CreateAdForm() {
         </div>
 
         {/* Category Information */}
-        <div style={{ marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>Category Information</h2>
-          <div style={{ marginBottom: "10px" }}>
+        <div style={{ 
+          marginBottom: "20px", 
+          backgroundColor: "#fff", 
+          padding: "20px", 
+          borderRadius: "8px", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)" 
+        }}>
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}>Category Information</h2>
+          <div style={{ marginBottom: "15px" }}>
             <label>Category *</label>
             <select
               value={category}
@@ -267,7 +423,7 @@ export default function CreateAdForm() {
               ))}
             </select>
           </div>
-          <div style={{ marginBottom: "10px" }}>
+          <div style={{ marginBottom: "15px" }}>
             <label>Subcategory *</label>
             <select
               value={subcategory}
@@ -285,7 +441,7 @@ export default function CreateAdForm() {
             </select>
           </div>
           {brands.length > 0 && (
-            <div style={{ marginBottom: "10px" }}>
+            <div style={{ marginBottom: "15px" }}>
               <label>Brand</label>
               <select
                 value={brand}
@@ -302,34 +458,35 @@ export default function CreateAdForm() {
             </div>
           )}
         </div>
-         {/* Custom Fields */}
-         {availableCustomFields && Object.keys(availableCustomFields).length > 0 && (
-          <section style={{ marginBottom: "20px" }}>
-            <h2 style={{ fontSize: "20px", fontWeight: "bold" }}>Extra Details</h2>
-            {Object.keys(availableCustomFields).map((field) => (
-              <input
-                key={field}
-                type="text"
-                placeholder={field}
-                value={customFields[field] || ""}
-                onChange={(e) => handleCustomFieldChange(field, e.target.value)}
-                style={{
-                  width: "30%",
-                  padding: "10px",
-                  border: "1px solid #ccc",
-                  borderRadius: "5px",
-                  marginBottom: "10px",
-                  gap: "10px",
-                }}
-              />
-            ))}
-          </section>
+
+        {/* Custom Fields */}
+        {availableCustomFields && Object.keys(availableCustomFields).length > 0 && (
+          <div style={{ 
+            marginBottom: "20px", 
+            backgroundColor: "#fff", 
+            padding: "20px", 
+            borderRadius: "8px", 
+            boxShadow: "0 1px 3px rgba(0,0,0,0.1)" 
+          }}>
+            <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}>Extra Details</h2>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "15px" }}>
+              {Object.entries(availableCustomFields).map(([fieldName, options]) => 
+                renderCustomFieldInput(fieldName, options)
+              )}
+            </div>
+          </div>
         )}
 
         {/* Location Information */}
-        <div style={{ marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>Location</h2>
-          <div style={{ marginBottom: "10px" }}>
+        <div style={{ 
+          marginBottom: "20px", 
+          backgroundColor: "#fff", 
+          padding: "20px", 
+          borderRadius: "8px", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)" 
+        }}>
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}>Location</h2>
+          <div style={{ marginBottom: "15px" }}>
             <label>County *</label>
             <select
               value={county}
@@ -345,7 +502,7 @@ export default function CreateAdForm() {
               ))}
             </select>
           </div>
-          <div style={{ marginBottom: "10px" }}>
+          <div style={{ marginBottom: "15px" }}>
             <label>Subcounty *</label>
             <select
               value={subcounty}
@@ -362,7 +519,7 @@ export default function CreateAdForm() {
               ))}
             </select>
           </div>
-          <div style={{ marginBottom: "10px" }}>
+          <div style={{ marginBottom: "15px" }}>
             <label>Town *</label>
             <select
               value={town}
@@ -382,15 +539,28 @@ export default function CreateAdForm() {
         </div>
 
         {/* Images */}
-        <div style={{ marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>Images</h2>
+        <div style={{ 
+          marginBottom: "20px", 
+          backgroundColor: "#fff", 
+          padding: "20px", 
+          borderRadius: "8px", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)" 
+        }}>
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}>Images</h2>
+          <p style={{ marginBottom: "10px" }}>Upload at least one image of your item (max 8)</p>
           <ImageUpload images={images} setImages={setImages} maxImages={8} />
         </div>
 
         {/* Contact Information */}
-        <div style={{ marginBottom: "20px" }}>
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>Contact Information</h2>
-          <div style={{ marginBottom: "10px" }}>
+        <div style={{ 
+          marginBottom: "20px", 
+          backgroundColor: "#fff", 
+          padding: "20px", 
+          borderRadius: "8px", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)" 
+        }}>
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}>Contact Information</h2>
+          <div style={{ marginBottom: "15px" }}>
             <label>Phone Number *</label>
             <input
               type="tel"
@@ -398,9 +568,10 @@ export default function CreateAdForm() {
               onChange={(e) => setPhone(e.target.value)}
               required
               style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+              placeholder="e.g., 0712 345 678"
             />
           </div>
-          <div style={{ marginBottom: "10px" }}>
+          <div style={{ marginBottom: "15px" }}>
             <label>Email *</label>
             <input
               type="email"
@@ -408,15 +579,17 @@ export default function CreateAdForm() {
               onChange={(e) => setEmail(e.target.value)}
               required
               style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+              placeholder="your@email.com"
             />
           </div>
-          <div style={{ marginBottom: "10px" }}>
+          <div style={{ marginBottom: "15px" }}>
             <label>WhatsApp Number (optional)</label>
             <input
               type="tel"
               value={whatsapp}
               onChange={(e) => setWhatsapp(e.target.value)}
               style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+              placeholder="e.g., 0712 345 678"
             />
           </div>
         </div>
@@ -425,14 +598,16 @@ export default function CreateAdForm() {
         <div style={{ textAlign: "right" }}>
           <button
             type="submit"
-            disabled={submitting}
+            disabled={submitting || !user}
             style={{
-              backgroundColor: submitting ? "#ccc" : "#007bff",
+              backgroundColor: submitting || !user ? "#ccc" : "#007bff",
               color: "white",
-              padding: "10px 20px",
+              padding: "12px 25px",
               border: "none",
               borderRadius: "5px",
-              cursor: submitting ? "not-allowed" : "pointer",
+              cursor: submitting || !user ? "not-allowed" : "pointer",
+              fontSize: "16px",
+              fontWeight: "bold",
             }}
           >
             {submitting ? "Submitting..." : "Post Ad"}
