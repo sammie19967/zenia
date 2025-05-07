@@ -25,6 +25,7 @@ export default function CreateAdForm() {
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [images, setImages] = useState([]);
+  const [paymentPlan, setPaymentPlan] = useState("Free Ad");
 
   // States for dropdown options
   const [counties, setCounties] = useState([]);
@@ -221,6 +222,7 @@ export default function CreateAdForm() {
           email,
           whatsapp: whatsapp || undefined,
         },
+        paymentPlan, // <-- Include paymentPlan here
       };
 
       const response = await axios.post("/api/ads", adData);
@@ -591,6 +593,30 @@ export default function CreateAdForm() {
               style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
               placeholder="e.g., 0712 345 678"
             />
+          </div>
+        </div>
+
+        {/* Payment Plan */}
+        <div style={{ 
+          marginBottom: "20px", 
+          backgroundColor: "#fff", 
+          padding: "20px", 
+          borderRadius: "8px", 
+          boxShadow: "0 1px 3px rgba(0,0,0,0.1)" 
+        }}>
+          <h2 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}>Payment Plan</h2>
+          <div style={{ marginBottom: "15px" }}>
+            <label>Choose a payment plan *</label>
+            <select
+              value={paymentPlan}
+              onChange={(e) => setPaymentPlan(e.target.value)}
+              required
+              style={{ width: "100%", padding: "10px", border: "1px solid #ccc", borderRadius: "5px" }}
+            >
+              <option value="Free Ad">Free Ad</option>
+              <option value="Premium Ad">Premium Ad</option>
+              <option value="Featured Ad">Featured Ad</option>
+            </select>
           </div>
         </div>
 

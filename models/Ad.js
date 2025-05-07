@@ -31,7 +31,7 @@ const AdSchema = new Schema(
     views: { type: Number, default: 0 }, // Tracks the number of views for the ad
     paymentPlan: {
       type: String,
-      enum: ["Free Ad", "Class", "Prime"],
+      enum: ["Free Ad", "Premium Ad", "Featured Ad"],
       default: "Free Ad", // Specifies the payment plan for the ad
     },
   },
