@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Search } from "lucide-react";
 import "@/styles/AdsPage.css"; // Import the CSS file
+import "@/components/Navbar"; // Import global styles
 
 async function fetchAds() {
   try {
@@ -60,7 +61,10 @@ export default function AdsPage() {
   }
 
   return (
+     
     <div className="ads-container">
+  
+      
       <h1 className="page-title">Browse All Ads</h1>
       
       {/* Search Bar */}
