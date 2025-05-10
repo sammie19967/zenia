@@ -9,12 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "axios": "^1.9.0",
     "cloudinary": "^2.6.0",
+    "date-fns": "^4.1.0",
     "firebase": "^11.6.1",
     "firebase-admin": "^13.3.0",
     "firebase-tools": "^14.2.1",
     "formidable": "^3.5.4",
+    "heroicons": "^2.2.0",
     "lucide-react": "^0.487.0",
     "mongoose": "^8.13.2",
     "next": "15.3.0",

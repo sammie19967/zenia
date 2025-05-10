@@ -2,6 +2,40 @@ import { NextResponse } from "next/server";
 import {connectDB} from "@/lib/mongoose"; // You'll need to create this db connection utility
 import Ad from "@/models/Ad"; // Import the Ad model you provided
 
+export async function POST(request) {
+  try {
+    await connectDB();
+    
+    const body = await request.json();
+    const { title, description, price, negotiable, category, subcategory, customFields, location, brand, images, userId, contactInfo } = body;
+    
+    // Create a new ad
+    const newAd = new Ad({
+      title,
+      description,
+      price,
+      negotiable,
+      category,
+      subcategory,
+      customFields,
+      location,
+      brand,
+      images,
+      userId,
+      contactInfo
+    });
+    
+    await newAd.save();
+    
+    return NextResponse.json({ message: "Ad created successfully", ad: newAd }, { status: 201 });
+  } catch (error) {
+    console.error("Error creating ad:", error);
+    return NextResponse.json(
+      { error: "Failed to create ad" },
+      { status: 500 }
+    );
+  }
+}
 export async function GET(request) {
   try {
     await connectDB();
@@ -12,7 +46,7 @@ export async function GET(request) {
     const county = searchParams.get("county");
     const priceMin = searchParams.get("priceMin");
     const priceMax = searchParams.get("priceMax");
-    const status = searchParams.get("status") || "active";
+    const status = searchParams.get("status") || "pending";
     
     // Build query
     const query = { status };
