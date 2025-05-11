@@ -1,0 +1,73 @@
+.similarAds {
+  margin-top: 48px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.imageContainer {
+  position: relative;
+  width: 100%;
+  height: 180px;
+}
+
+.image {
+  object-fit: cover;
+}
+
+.noImage {
+  width: 100%;
+  height: 100%;
+  background-color: #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+}
+
+.content {
+  padding: 12px;
+}
+
+.adTitle {
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.price {
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.location {
+  font-size: 14px;
+  color: #6b7280;
+}

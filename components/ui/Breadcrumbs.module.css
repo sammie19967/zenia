@@ -1,0 +1,35 @@
+.breadcrumbs {
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.breadcrumbs ol {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  align-items: center;
+}
+
+.breadcrumbs li {
+  display: flex;
+  align-items: center;
+}
+
+.link {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+.current {
+  color: #6b7280;
+}
+
+.separator {
+  margin: 0 8px;
+  color: #9ca3af;
+}

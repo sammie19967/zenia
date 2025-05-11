@@ -1,0 +1,33 @@
+.safetyTips {
+  background-color: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #92400e;
+}
+
+.tipsList {
+  list-style-type: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.tipsList li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 8px;
+  color: #78350f;
+}
+
+.tipsList li:before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: #f59e0b;
+  font-weight: bold;
+}

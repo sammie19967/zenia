@@ -1,0 +1,54 @@
+.actionsContainer {
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.actionsTitle {
+  font-weight: 600;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.actionsButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.editButton,
+.deleteButton,
+.reactivateButton {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+}
+
+.editButton {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.editButton:hover {
+  background-color: #2563eb;
+}
+
+.deleteButton {
+  background-color: #ef4444;
+  color: white;
+}
+
+.deleteButton:hover {
+  background-color: #dc2626;
+}
+
+.reactivateButton {
+  background-color: #10b981;
+  color: white;
+}
+
+.reactivateButton:hover {
+  background-color: #059669;
+}
