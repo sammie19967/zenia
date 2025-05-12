@@ -101,7 +101,7 @@ export default function ProfileDashboard() {
         <h2>Your Ads</h2>
         {ads.length === 0 ? (
           <div className="empty-state">
-            <p>You haven't posted any ads yet.</p>
+            <p>You haven&apos;t posted any ads yet.</p>
             <Link href="/ads/create" className="create-ad-link">Create Your First Ad</Link>
           </div>
         ) : (
