@@ -60,7 +60,7 @@ export default function ProfileDashboard() {
       <h1>Your Profile</h1>
       <div className="profile-section">
         <Image
-          src={userData?.image || "/default-avatar.png"}
+          src={userData?.image || "/default-avatar.jpg"}
           alt="Profile"
           width={120}
           height={120}

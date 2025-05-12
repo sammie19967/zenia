@@ -78,7 +78,7 @@ export default function Hero() {
             Browse Listings
             <ArrowRight size={16} className="zen-cta-icon" />
           </Link>
-          <Link href="/ads/create" className="zen-cta-secondary">
+          <Link href="/create-ads" className="zen-cta-secondary">
             Start Selling
           </Link>
         </div>
