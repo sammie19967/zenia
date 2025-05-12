@@ -42,47 +42,43 @@ export default function Hero() {
   };
 
   return (
-    <section className="zenia-hero">
-      {/* Animated Bubbles Background */}
-      <div className="zenia-bubbles">
-        {[...Array(8)].map((_, i) => (
-          <div key={i} className="zenia-bubble" />
-        ))}
-      </div>
+    <section className="zen-hero">
+      <div className="zen-hero-overlay"></div>
       
-      <div className="zenia-hero-content">
-        <h1 className="zenia-hero-title">
-          Welcome to <span className="zenia-brand-name">Zenia</span>
-        </h1>
-        <h2 className="zenia-hero-subtitle">
-          Your premier marketplace for unique finds and great deals
-        </h2>
-        
-        <div className="zenia-typewriter">
-          <span className="zenia-typewriter-text">{text}</span>
-          <span className="zenia-typewriter-cursor"></span>
+      <div className="zen-hero-content">
+        <div className="zen-hero-text">
+          <h1 className="zen-hero-title">
+            Your Gateway to <span className="zen-highlight">Quality</span> Finds
+          </h1>
+          <div className="zen-typewriter-container">
+            <span className="zen-typewriter-text">{text}</span>
+            <span className="zen-typewriter-cursor">|</span>
+            <span className="zen-typewriter-subtext">with Zenia Marketplace</span>
+          </div>
         </div>
 
-        <form onSubmit={handleSearch} className="zenia-search-container">
-          <div className="zenia-search-bar">
+        <form onSubmit={handleSearch} className="zen-search-container">
+          <div className="zen-search-bar">
+            <Search size={18} className="zen-search-icon" />
             <input
               type="text"
-              placeholder="Search for products, categories..."
+              placeholder="Search products, services..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="zenia-search-input"
+              className="zen-search-input"
             />
-            <button type="submit" className="zenia-search-button">
-              <Search size={20} />
+            <button type="submit" className="zen-search-button">
+              Search
             </button>
           </div>
         </form>
 
-        <div className="zenia-hero-buttons">
-          <Link href="/ads" className="zenia-hero-btn-primary">
-            Browse Listings <ArrowRight size={18} />
+        <div className="zen-hero-cta">
+          <Link href="/ads" className="zen-cta-primary">
+            Browse Listings
+            <ArrowRight size={16} className="zen-cta-icon" />
           </Link>
-          <Link href="/ads/create" className="zenia-hero-btn-secondary">
+          <Link href="/ads/create" className="zen-cta-secondary">
             Start Selling
           </Link>
         </div>
