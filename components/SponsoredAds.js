@@ -9,13 +9,18 @@ export default function SponsoredAds() {
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
   const trackRef = useRef(null);
+  const [visibleCards, setVisibleCards] = useState(6);
 
   const fetchSponsoredAds = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/ads?package=Prime");
-      const data = await res.json();
-      setAds(data);
+      const res = await fetch("/api/ads?paymentPlan=Free Ad&limit=10");
+      if (res.ok) {
+        const data = await res.json();
+        setAds(data);
+      } else {
+        console.error("Failed to fetch ads:", await res.text());
+      }
     } catch (error) {
       console.error("Failed to fetch sponsored ads:", error);
     } finally {
@@ -39,8 +44,6 @@ export default function SponsoredAds() {
     );
   };
 
-  // Calculate visible cards based on screen size
-  const [visibleCards, setVisibleCards] = useState(6);
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1200) {
@@ -68,8 +71,8 @@ export default function SponsoredAds() {
 
   if (!ads.length) return (
     <div className="zen-sponsored-empty">
-      <p>No sponsored ads available at the moment.</p>
-      <Link href="/ads/create" className="zen-create-link">
+      <p>No premium ads available at the moment.</p>
+      <Link href="/create-ads" className="zen-create-link">
         Become a featured seller
       </Link>
     </div>
@@ -79,7 +82,7 @@ export default function SponsoredAds() {
     <section className="zen-sponsored-section">
       <div className="zen-sponsored-header">
         <h2 className="zen-sponsored-title">
-          <span className="zen-title-highlight">Sponsored</span> ads
+          <span className="zen-title-highlight">Premium</span> listings
         </h2>
         <div className="zen-nav-controls">
           <button 
@@ -119,16 +122,16 @@ export default function SponsoredAds() {
                   loading="lazy"
                 />
                 <div className="zen-premium-badge">
-                  <span>Prime</span>
+                  <span>Premium</span>
                   <div className="zen-badge-glow"></div>
                 </div>
               </div>
               <div className="zen-card-content">
                 <h3 className="zen-product-title">{ad.title.toLowerCase()}</h3>
                 <div className="zen-product-meta">
-                  <span className="zen-product-price">Ksh {ad.price.toLocaleString()}</span>
+                  <span className="zen-product-price">Ksh {ad.price?.toLocaleString() || '0'}</span>
                   <span className="zen-product-location">
-                    <MapPin /> {ad.countyId?.name || "Nairobi"}, {ad.subcountyId?.name || "CBD"}
+                    <MapPin /> {ad.location?.county || "Nairobi"}, {ad.location?.subcounty || "CBD"}
                   </span>
                 </div>
               </div>
