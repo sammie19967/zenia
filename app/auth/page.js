@@ -10,7 +10,7 @@ import { FiMail, FiLock, FiUser, FiArrowRight } from "react-icons/fi";
 import { signInWithEmail, signUpWithEmail, sendPasswordResetEmail } from "@/lib/firebase";
 import GoogleAuth from "@/components/GoogleAuth";
 import PhoneSignIn from "@/components/PhoneSignIn";
-import "@/styles/auth.css";
+import "@/styles/auth.css"; // Import the enhanced CSS
 
 export default function AuthPage() {
   const router = useRouter();
@@ -22,10 +22,12 @@ export default function AuthPage() {
   const [resetEmail, setResetEmail] = useState("");
   const [showReset, setShowReset] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAuth = async (e) => {
     e.preventDefault();
     setError("");
+    setIsLoading(true);
     const toastId = toast.loading(isLogin ? "Signing in..." : "Creating account...");
 
     try {
@@ -58,26 +60,46 @@ export default function AuthPage() {
       console.error(err);
       setError(err.message);
       toast.error(err.message || "Something went wrong", { id: toastId });
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleReset = async () => {
+    if (!resetEmail) {
+      setError("Please enter your email address");
+      return;
+    }
+    
+    setIsLoading(true);
     const toastId = toast.loading("Sending reset link...");
+    
     try {
       await sendPasswordResetEmail(resetEmail);
       toast.success("Password reset link sent!", { id: toastId });
       setShowReset(false);
+      setResetEmail("");
     } catch (err) {
       setError(err.message);
       toast.error(err.message || "Failed to send reset link", { id: toastId });
+    } finally {
+      setIsLoading(false);
     }
+  };
+
+  const toggleAuthMode = () => {
+    setIsLogin(!isLogin);
+    setError("");
+    setEmail("");
+    setPassword("");
+    setName("");
   };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
         <h2 className="auth-title">
-          {isLogin ? "Sign in to your account" : "Create a new account"}
+          {showReset ? "Reset Password" : isLogin ? "Welcome Back" : "Create Account"}
         </h2>
 
         {error && (
@@ -111,18 +133,27 @@ export default function AuthPage() {
                   onChange={(e) => setResetEmail(e.target.value)}
                   className="form-input"
                   placeholder="Enter your email"
+                  disabled={isLoading}
                 />
               </div>
             </div>
 
-            <button onClick={handleReset} className="btn btn-primary">
-              Send Reset Link
+            <button 
+              onClick={handleReset} 
+              className="btn btn-primary"
+              disabled={isLoading}
+            >
+              {isLoading ? "Sending..." : "Send Reset Link"}
             </button>
 
             <div className="auth-footer">
               <button
-                onClick={() => setShowReset(false)}
+                onClick={() => {
+                  setShowReset(false);
+                  setError("");
+                }}
                 className="auth-link"
+                disabled={isLoading}
               >
                 Back to {isLogin ? "login" : "signup"}
               </button>
@@ -148,6 +179,7 @@ export default function AuthPage() {
                       onChange={(e) => setName(e.target.value)}
                       className="form-input"
                       placeholder="John Doe"
+                      disabled={isLoading}
                     />
                   </div>
                 </div>
@@ -169,6 +201,7 @@ export default function AuthPage() {
                     onChange={(e) => setEmail(e.target.value)}
                     className="form-input"
                     placeholder="you@example.com"
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -189,6 +222,7 @@ export default function AuthPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     className="form-input"
                     placeholder={isLogin ? "Enter your password" : "Create a password"}
+                    disabled={isLoading}
                   />
                 </div>
               </div>
@@ -196,22 +230,30 @@ export default function AuthPage() {
               {isLogin && (
                 <div className="remember-forgot">
                   <label className="checkbox-label">
-                    <input type="checkbox" className="checkbox-input" />
+                    <input type="checkbox" className="checkbox-input" disabled={isLoading} />
                     Remember me
                   </label>
 
                   <button
                     type="button"
-                    onClick={() => setShowReset(true)}
+                    onClick={() => {
+                      setShowReset(true);
+                      setError("");
+                    }}
                     className="auth-link"
+                    disabled={isLoading}
                   >
                     Forgot password?
                   </button>
                 </div>
               )}
 
-              <button type="submit" className="btn btn-primary">
-                {isLogin ? "Sign in" : "Sign up"}
+              <button 
+                type="submit" 
+                className="btn btn-primary"
+                disabled={isLoading}
+              >
+                {isLoading ? (isLogin ? "Signing in..." : "Creating account...") : (isLogin ? "Sign in" : "Sign up")}
               </button>
             </form>
 
@@ -228,11 +270,9 @@ export default function AuthPage() {
 
             <div className="auth-footer">
               <button
-                onClick={() => {
-                  setIsLogin(!isLogin);
-                  setError("");
-                }}
+                onClick={toggleAuthMode}
                 className="auth-link"
+                disabled={isLoading}
               >
                 {isLogin ? "Need an account? Sign up" : "Already have an account? Sign in"}
                 <FiArrowRight className="auth-link-icon" />
