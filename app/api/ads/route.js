@@ -39,18 +39,18 @@ export async function POST(request) {
 export async function GET(request) {
   try {
     await connectDB();
-    
-    // Get URL search params
+
     const { searchParams } = new URL(request.url);
     const category = searchParams.get("category");
     const county = searchParams.get("county");
     const priceMin = searchParams.get("priceMin");
     const priceMax = searchParams.get("priceMax");
     const status = searchParams.get("status") || "pending";
-    
-    // Build query
+    const paymentPlan = searchParams.get("paymentPlan");
+    const limit = parseInt(searchParams.get("limit")) || 100;
+
     const query = { status };
-    
+
     if (category) query.category = category;
     if (county) query["location.county"] = county;
     if (priceMin) query.price = { $gte: parseInt(priceMin) };
@@ -61,19 +61,20 @@ export async function GET(request) {
         query.price = { $lte: parseInt(priceMax) };
       }
     }
-    
-    // Fetch ads
+
+    if (paymentPlan) {
+      // Case-insensitive match
+      query.paymentPlan = { $regex: new RegExp(`^${paymentPlan}$`, "i") };
+    }
+
     const ads = await Ad.find(query)
       .sort({ createdAt: -1 })
-      .limit(100) // Limit to prevent too many results
+      .limit(limit)
       .lean();
-    
-    return NextResponse.json({ ads });
+
+    return NextResponse.json(ads); // remove the `{ ads }` wrapper for compatibility with your frontend
   } catch (error) {
     console.error("Error fetching ads:", error);
-    return NextResponse.json(
-      { error: "Failed to fetch ads" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Failed to fetch ads" }, { status: 500 });
   }
 }
